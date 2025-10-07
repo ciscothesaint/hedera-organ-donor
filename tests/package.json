@@ -1,0 +1,14 @@
+{
+  "name": "organ-waitlist-tests",
+  "version": "1.0.0",
+  "description": "Test suite for organ waitlist registry",
+  "scripts": {
+    "test": "mocha test-registration.js --timeout 60000",
+    "test:watch": "mocha test-registration.js --watch",
+    "test:verbose": "mocha test-registration.js --timeout 60000 --reporter spec"
+  },
+  "dependencies": {
+    "chai": "^4.4.1",
+    "mocha": "^10.4.0"
+  }
+}

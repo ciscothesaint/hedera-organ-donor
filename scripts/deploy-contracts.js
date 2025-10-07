@@ -1,0 +1,110 @@
+require('dotenv').config({ path: './backend/.env' });
+const { createHederaClient, closeClient } = require('../backend/src/hedera/hederaClient');
+const { deployContract } = require('../backend/src/hedera/contractService');
+const { createTopic } = require('../backend/src/hedera/topicService');
+const { ContractFunctionParameters } = require('@hashgraph/sdk');
+const fs = require('fs');
+const path = require('path');
+
+async function deployContracts() {
+    let client;
+
+    try {
+        console.log('\n🚀 Starting Hedera Contract Deployment\n');
+        console.log(`Account ID: ${process.env.HEDERA_ACCOUNT_ID}`);
+        console.log(`Network: ${process.env.HEDERA_NETWORK}\n`);
+
+        // Create Hedera client
+        client = createHederaClient();
+        console.log('✅ Connected to Hedera Network\n');
+
+        // Step 1: Deploy WaitlistRegistry Contract
+        console.log('📝 Deploying WaitlistRegistry contract...');
+        const waitlistContractId = await deployContract(client, 'WaitlistRegistry');
+        console.log(`✅ WaitlistRegistry deployed: ${waitlistContractId}\n`);
+
+        // Step 2: Deploy MatchingEngine Contract (with WaitlistRegistry address)
+        console.log('📝 Deploying MatchingEngine contract...');
+        const matchingContractParams = new ContractFunctionParameters()
+            .addAddress(waitlistContractId.toSolidityAddress());
+        const matchingContractId = await deployContract(
+            client,
+            'MatchingEngine',
+            matchingContractParams
+        );
+        console.log(`✅ MatchingEngine deployed: ${matchingContractId}\n`);
+
+        // Step 3: Deploy AuditTrail Contract
+        console.log('📝 Deploying AuditTrail contract...');
+        const auditContractId = await deployContract(client, 'AuditTrail');
+        console.log(`✅ AuditTrail deployed: ${auditContractId}\n`);
+
+        // Step 4: Create HCS Topics
+        console.log('📝 Creating Hedera Consensus Service Topics...\n');
+
+        const patientRegistrationTopic = await createTopic(client, 'Patient Registration Events');
+        const organMatchTopic = await createTopic(client, 'Organ Match Events');
+        const auditLogTopic = await createTopic(client, 'Audit Log Events');
+
+        // Step 5: Update .env file
+        console.log('\n📝 Updating .env file with deployed contract IDs...');
+        const envPath = path.join(__dirname, '../backend/.env');
+
+        let envContent = '';
+        if (fs.existsSync(envPath)) {
+            envContent = fs.readFileSync(envPath, 'utf8');
+        }
+
+        // Update or add contract IDs
+        envContent = updateEnvVariable(envContent, 'WAITLIST_CONTRACT_ID', waitlistContractId.toString());
+        envContent = updateEnvVariable(envContent, 'MATCHING_CONTRACT_ID', matchingContractId.toString());
+        envContent = updateEnvVariable(envContent, 'AUDIT_CONTRACT_ID', auditContractId.toString());
+        envContent = updateEnvVariable(envContent, 'PATIENT_REGISTRATION_TOPIC_ID', patientRegistrationTopic.toString());
+        envContent = updateEnvVariable(envContent, 'ORGAN_MATCH_TOPIC_ID', organMatchTopic.toString());
+        envContent = updateEnvVariable(envContent, 'AUDIT_LOG_TOPIC_ID', auditLogTopic.toString());
+
+        fs.writeFileSync(envPath, envContent);
+        console.log('✅ .env file updated\n');
+
+        // Summary
+        console.log('🎉 Deployment Complete!\n');
+        console.log('='.repeat(60));
+        console.log('Contract IDs:');
+        console.log('='.repeat(60));
+        console.log(`WaitlistRegistry:  ${waitlistContractId}`);
+        console.log(`MatchingEngine:    ${matchingContractId}`);
+        console.log(`AuditTrail:        ${auditContractId}`);
+        console.log('\nTopic IDs:');
+        console.log('='.repeat(60));
+        console.log(`Patient Registration: ${patientRegistrationTopic}`);
+        console.log(`Organ Match:          ${organMatchTopic}`);
+        console.log(`Audit Log:            ${auditLogTopic}`);
+        console.log('='.repeat(60));
+        console.log('\n✅ All contracts and topics deployed successfully!');
+        console.log('💡 Make sure to update your backend .env file with these values.\n');
+
+    } catch (error) {
+        console.error('❌ Deployment failed:', error);
+        process.exit(1);
+    } finally {
+        if (client) {
+            await closeClient(client);
+        }
+    }
+}
+
+/**
+ * Update or add environment variable in .env content
+ */
+function updateEnvVariable(content, key, value) {
+    const regex = new RegExp(`^${key}=.*$`, 'm');
+
+    if (regex.test(content)) {
+        return content.replace(regex, `${key}=${value}`);
+    } else {
+        return content + `\n${key}=${value}`;
+    }
+}
+
+// Run deployment
+deployContracts();

@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir:*)",
+      "Bash(tree:*)",
+      "Bash(npx solc:*)",
+      "Bash(node:*)",
+      "Bash(npm install:*)",
+      "Bash(cat:*)",
+      "Bash(npm run test:workflow:*)",
+      "Bash(npm run:*)",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Bash(taskkill:*)",
+      "Bash(dir:*)",
+      "Bash(timeout:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

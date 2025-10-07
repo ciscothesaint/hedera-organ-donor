@@ -1,0 +1,40 @@
+{
+  "name": "organ-waitlist-registry",
+  "version": "1.0.0",
+  "description": "Transparent organ waitlist system on Hedera blockchain",
+  "private": true,
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "scripts": {
+    "install-all": "npm install && cd backend && npm install && cd ../frontend && npm install",
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "deploy:contracts": "node scripts/deploy-contracts.js",
+    "authorize": "node scripts/authorize-account.js",
+    "test": "node tests/run-all-scenarios.js",
+    "test:all": "node tests/run-all-scenarios.js",
+    "test:matching": "npx mocha tests/scenario-patient-matching.js --timeout 180000",
+    "test:workflow": "npx mocha tests/scenario-complete-workflow.js --timeout 300000",
+    "test:blood": "npx mocha tests/scenario-blood-compatibility.js --timeout 300000",
+    "test:urgency": "npx mocha tests/scenario-urgency-priority.js --timeout 300000",
+    "test:expiry": "npx mocha tests/scenario-organ-expiry.js --timeout 300000",
+    "test:concurrent": "npx mocha tests/scenario-concurrent-operations.js --timeout 600000"
+  },
+  "keywords": [
+    "hedera",
+    "blockchain",
+    "healthcare",
+    "organ-transplant",
+    "waitlist"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "mocha": "^10.2.0",
+    "chai": "^4.3.10"
+  }
+}

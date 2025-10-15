@@ -13,7 +13,18 @@
       "Bash(findstr:*)",
       "Bash(taskkill:*)",
       "Bash(dir:*)",
-      "Bash(timeout:*)"
+      "Bash(timeout:*)",
+      "Bash(ping:*)",
+      "Bash(curl:*)",
+      "Bash(python:*)",
+      "Bash(npx solcjs:*)",
+      "Bash(echo:*)",
+      "Bash(cmd /c:*)",
+      "Bash(copy contracts_GovernanceDAO_sol_GovernanceDAO.abi backendcontractsGovernanceDAO.abi)",
+      "Bash(copy contracts_GovernanceDAO_sol_GovernanceDAO.bin backendcontractsGovernanceDAO.bin)",
+      "Bash(tasklist)",
+      "Bash(copy \"frontend-dao\\src\\components\\Modal\\Modal.css\" \"frontend\\src\\components\\Modal\\Modal.css\")",
+      "Bash(copy:*)"
     ],
     "deny": [],
     "ask": []

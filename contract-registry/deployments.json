@@ -1,0 +1,144 @@
+{
+  "version": "1.0.0",
+  "lastUpdated": "2025-10-15T21:07:09.786Z",
+  "description": "Centralized registry for all smart contract deployments across networks",
+  "networks": {
+    "testnet": {
+      "networkId": "testnet",
+      "mirrorNode": "https://testnet.mirrornode.hedera.com",
+      "contracts": {
+        "WaitlistRegistry": {
+          "address": "0.0.7051975",
+          "deployedAt": "2025-10-15T21:07:09.786Z",
+          "deployedBy": "0.0.3700702",
+          "transactionId": "",
+          "version": "1.0.0",
+          "bytecodeHash": "",
+          "abiPath": "backend/contracts/WaitlistRegistry.abi"
+        },
+        "MatchingEngine": {
+          "address": "0.0.7051608",
+          "deployedAt": "2025-10-15T21:07:09.786Z",
+          "deployedBy": "0.0.3700702",
+          "transactionId": "",
+          "version": "1.0.0",
+          "bytecodeHash": "",
+          "abiPath": "backend/contracts/MatchingEngine.abi"
+        },
+        "AuditTrail": {
+          "address": "0.0.7051610",
+          "deployedAt": "2025-10-15T21:07:09.786Z",
+          "deployedBy": "0.0.3700702",
+          "transactionId": "",
+          "version": "1.0.0",
+          "bytecodeHash": "",
+          "abiPath": "backend/contracts/AuditTrail.abi"
+        },
+        "GovernanceDAO": {
+          "address": "0.0.7058079",
+          "deployedAt": "2025-10-15T21:07:09.786Z",
+          "deployedBy": "0.0.3700702",
+          "transactionId": "",
+          "version": "1.0.0",
+          "bytecodeHash": "",
+          "abiPath": "backend/contracts/GovernanceDAO.abi"
+        }
+      },
+      "topics": {
+        "PatientRegistration": {
+          "topicId": "0.0.7051613",
+          "createdAt": "2025-10-15T21:07:09.786Z",
+          "description": "Topic for patient registration events"
+        },
+        "OrganMatch": {
+          "topicId": "0.0.7051615",
+          "createdAt": "2025-10-15T21:07:09.786Z",
+          "description": "Topic for organ matching events"
+        },
+        "AuditLog": {
+          "topicId": "0.0.7051616",
+          "createdAt": "2025-10-15T21:07:09.786Z",
+          "description": "Topic for audit log events"
+        }
+      }
+    },
+    "mainnet": {
+      "networkId": "mainnet",
+      "mirrorNode": "https://mainnet-public.mirrornode.hedera.com",
+      "contracts": {
+        "WaitlistRegistry": {
+          "address": "",
+          "deployedAt": "",
+          "deployedBy": "",
+          "transactionId": "",
+          "version": "1.0.0",
+          "bytecodeHash": "",
+          "abiPath": "backend/contracts/WaitlistRegistry.abi"
+        },
+        "MatchingEngine": {
+          "address": "",
+          "deployedAt": "",
+          "deployedBy": "",
+          "transactionId": "",
+          "version": "1.0.0",
+          "bytecodeHash": "",
+          "abiPath": "backend/contracts/MatchingEngine.abi"
+        },
+        "AuditTrail": {
+          "address": "",
+          "deployedAt": "",
+          "deployedBy": "",
+          "transactionId": "",
+          "version": "1.0.0",
+          "bytecodeHash": "",
+          "abiPath": "backend/contracts/AuditTrail.abi"
+        },
+        "GovernanceDAO": {
+          "address": "",
+          "deployedAt": "",
+          "deployedBy": "",
+          "transactionId": "",
+          "version": "1.0.0",
+          "bytecodeHash": "",
+          "abiPath": "backend/contracts/GovernanceDAO.abi"
+        }
+      },
+      "topics": {
+        "PatientRegistration": {
+          "topicId": "",
+          "createdAt": "",
+          "description": "Topic for patient registration events"
+        },
+        "OrganMatch": {
+          "topicId": "",
+          "createdAt": "",
+          "description": "Topic for organ matching events"
+        },
+        "AuditLog": {
+          "topicId": "",
+          "createdAt": "",
+          "description": "Topic for audit log events"
+        }
+      }
+    }
+  },
+  "deploymentHistory": [
+    {
+      "timestamp": "2025-10-15T21:07:09.786Z",
+      "network": "testnet",
+      "deployer": "0.0.3700702",
+      "note": "Migrated from .env file",
+      "contracts": {
+        "WaitlistRegistry": "0.0.7051975",
+        "MatchingEngine": "0.0.7051608",
+        "AuditTrail": "0.0.7051610",
+        "GovernanceDAO": "0.0.7058079"
+      },
+      "topics": {
+        "PatientRegistration": "0.0.7051613",
+        "OrganMatch": "0.0.7051615",
+        "AuditLog": "0.0.7051616"
+      }
+    }
+  ]
+}

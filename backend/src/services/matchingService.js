@@ -5,6 +5,7 @@ const {
     ContractFunctionParameters
 } = require("@hashgraph/sdk");
 const hederaClient = require('../hedera/client');
+const contractRegistry = require('../config/contracts');
 
 /**
  * Matching Service
@@ -13,8 +14,8 @@ const hederaClient = require('../hedera/client');
 class MatchingService {
     constructor() {
         this.client = hederaClient.getClient();
-        this.matchingContractId = process.env.MATCHING_CONTRACT_ID;
-        this.waitlistContractId = process.env.WAITLIST_CONTRACT_ID;
+        this.matchingContractId = contractRegistry.getContractAddress('MatchingEngine');
+        this.waitlistContractId = contractRegistry.getContractAddress('WaitlistRegistry');
     }
 
     /**
@@ -277,13 +278,15 @@ class MatchingService {
         const { TopicMessageSubmitTransaction } = require("@hashgraph/sdk");
 
         try {
-            if (!process.env.ORGAN_MATCH_TOPIC_ID) {
+            const topicId = contractRegistry.getTopicId('OrganMatch');
+
+            if (!topicId) {
                 console.warn('⚠️  Organ match topic ID not configured');
                 return;
             }
 
             const transaction = new TopicMessageSubmitTransaction()
-                .setTopicId(process.env.ORGAN_MATCH_TOPIC_ID)
+                .setTopicId(topicId)
                 .setMessage(JSON.stringify({
                     type: 'ORGAN_OFFER',
                     ...data
@@ -305,13 +308,15 @@ class MatchingService {
         const { TopicMessageSubmitTransaction } = require("@hashgraph/sdk");
 
         try {
-            if (!process.env.ORGAN_MATCH_TOPIC_ID) {
+            const topicId = contractRegistry.getTopicId('OrganMatch');
+
+            if (!topicId) {
                 console.warn('⚠️  Organ match topic ID not configured');
                 return;
             }
 
             const transaction = new TopicMessageSubmitTransaction()
-                .setTopicId(process.env.ORGAN_MATCH_TOPIC_ID)
+                .setTopicId(topicId)
                 .setMessage(JSON.stringify({
                     type: 'MATCH_RESULT',
                     ...data
@@ -432,13 +437,15 @@ class MatchingService {
         const { TopicMessageSubmitTransaction } = require("@hashgraph/sdk");
 
         try {
-            if (!process.env.ORGAN_MATCH_TOPIC_ID) {
+            const topicId = contractRegistry.getTopicId('OrganMatch');
+
+            if (!topicId) {
                 console.warn('⚠️  Organ match topic ID not configured');
                 return;
             }
 
             const transaction = new TopicMessageSubmitTransaction()
-                .setTopicId(process.env.ORGAN_MATCH_TOPIC_ID)
+                .setTopicId(topicId)
                 .setMessage(JSON.stringify({
                     type: 'ALLOCATION',
                     ...data

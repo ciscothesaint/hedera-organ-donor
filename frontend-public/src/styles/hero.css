@@ -1,0 +1,591 @@
+/* ============================================
+   HERO SECTION - MEDICAL THEME
+   ============================================ */
+
+.hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 60px 80px;
+  background: var(--gradient-medical);
+  color: white;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Medical Cross Pattern Background */
+.hero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 80px,
+      rgba(255, 255, 255, 0.02) 80px,
+      rgba(255, 255, 255, 0.02) 82px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 80px,
+      rgba(255, 255, 255, 0.02) 80px,
+      rgba(255, 255, 255, 0.02) 82px
+    );
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Floating Medical Icons Background */
+.hero::after {
+  content: '⚕️';
+  position: absolute;
+  font-size: 500px;
+  opacity: 0.03;
+  right: -100px;
+  top: 50%;
+  transform: translateY(-50%) rotate(-15deg);
+  animation: float 6s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ============================================
+   HERO CONTENT
+   ============================================ */
+
+.hero-content {
+  flex: 1;
+  max-width: 650px;
+  z-index: 2;
+  animation: slideInLeft 0.8s ease-out;
+}
+
+/* Network Badge */
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background-color: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding: 10px 20px;
+  border-radius: 30px;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 32px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: var(--shadow-lg);
+  animation: slideIn 0.8s ease-out 0.2s backwards;
+}
+
+.badge-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: var(--success-green);
+  animation: pulse 2s ease-in-out infinite;
+  box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+}
+
+@keyframes pulseDot {
+  0% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(16, 185, 129, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+  }
+}
+
+/* Hero Title */
+.hero-title {
+  font-size: 4rem;
+  font-weight: 900;
+  line-height: 1.15;
+  margin-bottom: 24px;
+  letter-spacing: -1px;
+  animation: slideIn 0.8s ease-out 0.3s backwards;
+}
+
+.hero-highlight {
+  background: linear-gradient(135deg, #FFF 0%, #F0F9FF 50%, #FFF 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  display: inline-block;
+  position: relative;
+  text-shadow: 0 4px 20px rgba(255, 255, 255, 0.3);
+}
+
+.hero-highlight::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, transparent 0%, white 50%, transparent 100%);
+  border-radius: 2px;
+  animation: shimmer 2s ease-in-out infinite;
+}
+
+/* Hero Subtitle */
+.hero-subtitle {
+  font-size: 1.25rem;
+  line-height: 1.8;
+  margin-bottom: 40px;
+  opacity: 0.95;
+  font-weight: 400;
+  animation: slideIn 0.8s ease-out 0.4s backwards;
+}
+
+/* Hero Features */
+.hero-features {
+  display: flex;
+  gap: 32px;
+  margin-bottom: 45px;
+  flex-wrap: wrap;
+  animation: slideIn 0.8s ease-out 0.5s backwards;
+}
+
+.feature-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 10px 18px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all var(--transition-normal);
+}
+
+.feature-item:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-lg);
+}
+
+.feature-icon {
+  font-size: 1.4rem;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+/* Hero Actions */
+.hero-actions {
+  display: flex;
+  gap: 18px;
+  margin-bottom: 60px;
+  flex-wrap: wrap;
+  animation: slideIn 0.8s ease-out 0.6s backwards;
+}
+
+.hero-actions .btn {
+  padding: 16px 36px;
+  font-size: 17px;
+}
+
+/* Hero Trust Indicators */
+.hero-trust {
+  display: flex;
+  gap: 35px;
+  padding-top: 35px;
+  border-top: 1px solid rgba(255, 255, 255, 0.25);
+  flex-wrap: wrap;
+  animation: slideIn 0.8s ease-out 0.7s backwards;
+}
+
+.trust-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.trust-label {
+  font-size: 0.85rem;
+  opacity: 0.75;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+}
+
+.trust-value {
+  font-size: 1.1rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.status-online {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: var(--success-green);
+  animation: pulse 2s ease-in-out infinite;
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+}
+
+/* ============================================
+   HERO VISUAL - ENHANCED
+   ============================================ */
+
+.hero-visual {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 1;
+  animation: slideInRight 0.8s ease-out 0.4s backwards;
+}
+
+.blockchain-animation {
+  width: 450px;
+  height: 450px;
+  position: relative;
+}
+
+/* Medical Symbol in Center */
+.blockchain-animation::before {
+  content: '⚕️';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 80px;
+  opacity: 0.2;
+  animation: pulse 3s ease-in-out infinite;
+  filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.5));
+}
+
+.block {
+  width: 110px;
+  height: 110px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 16px;
+  position: absolute;
+  animation: float 3s ease-in-out infinite;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  box-shadow: var(--shadow-xl);
+  transition: all var(--transition-normal);
+}
+
+.block:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.1);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.block-1 {
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  animation-delay: 0s;
+}
+
+.block-1::before {
+  content: '👥';
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+}
+
+.block-2 {
+  top: 170px;
+  left: 50%;
+  transform: translateX(-50%);
+  animation-delay: 0.5s;
+}
+
+.block-2::before {
+  content: '🫀';
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+}
+
+.block-3 {
+  top: 340px;
+  left: 50%;
+  transform: translateX(-50%);
+  animation-delay: 1s;
+}
+
+.block-3::before {
+  content: '✅';
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateX(-50%) translateY(0);
+  }
+  50% {
+    transform: translateX(-50%) translateY(-20px);
+  }
+}
+
+/* Connecting Lines */
+.chain-line {
+  position: absolute;
+  width: 4px;
+  height: 380px;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.4),
+    rgba(255, 255, 255, 0.2),
+    rgba(255, 255, 255, 0.4)
+  );
+  top: 55px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 2px;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+}
+
+.chain-line::before,
+.chain-line::after {
+  content: '';
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 50%;
+  left: 50%;
+  transform: translateX(-50%);
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.6);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.chain-line::before {
+  top: 0;
+}
+
+.chain-line::after {
+  bottom: 0;
+  animation-delay: 1s;
+}
+
+/* ============================================
+   FLOATING PARTICLES (MEDICAL ICONS)
+   ============================================ */
+
+.hero-particles {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.particle {
+  position: absolute;
+  font-size: 24px;
+  opacity: 0.1;
+  animation: floatParticle 15s infinite;
+}
+
+.particle:nth-child(1) { left: 10%; top: 20%; animation-delay: 0s; }
+.particle:nth-child(2) { left: 85%; top: 15%; animation-delay: 2s; }
+.particle:nth-child(3) { left: 15%; top: 75%; animation-delay: 4s; }
+.particle:nth-child(4) { left: 75%; top: 65%; animation-delay: 6s; }
+.particle:nth-child(5) { left: 45%; top: 85%; animation-delay: 8s; }
+
+@keyframes floatParticle {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 0.1;
+  }
+  50% {
+    transform: translateY(-30px) rotate(180deg);
+    opacity: 0.2;
+  }
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+
+@media (max-width: 1024px) {
+  .hero {
+    flex-direction: column;
+    text-align: center;
+    padding: 60px 40px;
+  }
+
+  .hero-content {
+    max-width: 100%;
+  }
+
+  .hero-title {
+    font-size: 3rem;
+  }
+
+  .hero-features {
+    justify-content: center;
+  }
+
+  .hero-actions {
+    justify-content: center;
+  }
+
+  .hero-trust {
+    justify-content: center;
+  }
+
+  .hero-visual {
+    margin-top: 50px;
+  }
+
+  .blockchain-animation {
+    width: 350px;
+    height: 350px;
+  }
+
+  .block {
+    width: 90px;
+    height: 90px;
+    font-size: 2rem;
+  }
+
+  .block-2 {
+    top: 130px;
+  }
+
+  .block-3 {
+    top: 260px;
+  }
+
+  .chain-line {
+    height: 300px;
+    top: 45px;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero {
+    padding: 50px 20px;
+    min-height: auto;
+  }
+
+  .hero-title {
+    font-size: 2.5rem;
+  }
+
+  .hero-subtitle {
+    font-size: 1.1rem;
+  }
+
+  .hero-features {
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .hero-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .hero-actions .btn {
+    width: 100%;
+  }
+
+  .hero-trust {
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+  }
+
+  .blockchain-animation {
+    width: 280px;
+    height: 280px;
+  }
+
+  .block {
+    width: 70px;
+    height: 70px;
+    font-size: 1.5rem;
+  }
+
+  .block-2 {
+    top: 105px;
+  }
+
+  .block-3 {
+    top: 210px;
+  }
+
+  .chain-line {
+    height: 240px;
+    top: 35px;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero {
+    padding: 40px 16px;
+  }
+
+  .hero-title {
+    font-size: 2rem;
+  }
+
+  .hero-subtitle {
+    font-size: 1rem;
+  }
+
+  .hero-badge {
+    font-size: 13px;
+    padding: 8px 16px;
+  }
+
+  .feature-item {
+    font-size: 0.9rem;
+    padding: 8px 14px;
+  }
+
+  .hero-actions .btn {
+    padding: 14px 28px;
+    font-size: 15px;
+  }
+
+  .blockchain-animation {
+    width: 240px;
+    height: 240px;
+  }
+
+  .block {
+    width: 60px;
+    height: 60px;
+    font-size: 1.2rem;
+  }
+
+  .block-2 {
+    top: 90px;
+  }
+
+  .block-3 {
+    top: 180px;
+  }
+
+  .chain-line {
+    height: 200px;
+    top: 30px;
+  }
+}

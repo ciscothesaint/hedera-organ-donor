@@ -8,6 +8,14 @@ const patientRoutes = require('./api/patientRoutes');
 const organRoutes = require('./api/organRoutes');
 const mirrorRoutes = require('./routes/mirrorRoutes');
 
+// DAO Routes
+const daoAuthRoutes = require('./api/daoAuthRoutes');
+const daoProposalRoutes = require('./api/daoProposalRoutes');
+const daoRoleRoutes = require('./api/daoRoleRoutes');
+
+// Admin DAO Management Routes
+const adminDaoRoutes = require('./api/adminDaoRoutes');
+
 const app = express();
 const PORT = process.env.PORT || 3001;
 
@@ -31,11 +39,17 @@ app.get('/health', (req, res) => {
     });
 });
 
-// API Routes
+// Admin Platform API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/patients', patientRoutes);
 app.use('/api/organs', organRoutes);
 app.use('/api/mirror', mirrorRoutes); // FREE queries - no gas fees!
+app.use('/api/admin', adminDaoRoutes); // Admin DAO user management
+
+// DAO Platform API Routes (Separate authentication)
+app.use('/api/dao/auth', daoAuthRoutes);
+app.use('/api/dao/proposals', daoProposalRoutes);
+app.use('/api/dao/roles', daoRoleRoutes);
 
 // 404 handler
 app.use((req, res) => {

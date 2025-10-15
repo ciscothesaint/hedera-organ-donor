@@ -8,8 +8,19 @@ function RegisterPatient() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
 
+  // Generate random patient ID
+  const generatePatientId = () => {
+    // Format: PT-YYYYMMDD-XXXX (e.g., PT-20250116-5823)
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const random = Math.floor(Math.random() * 10000).toString().padStart(4, '0');
+    return `PT-${year}${month}${day}-${random}`;
+  };
+
   const [formData, setFormData] = useState({
-    patientId: '',
+    patientId: generatePatientId(),
     personalInfo: {
       firstName: '',
       lastName: '',
@@ -33,6 +44,10 @@ function RegisterPatient() {
       attendingPhysician: '',
     },
   });
+
+  const handleRefreshPatientId = () => {
+    setFormData({ ...formData, patientId: generatePatientId() });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -82,12 +97,48 @@ function RegisterPatient() {
 
           <div className="form-group">
             <label className="label">Patient ID</label>
-            <input
-              className="input"
-              value={formData.patientId}
-              onChange={(e) => setFormData({ ...formData, patientId: e.target.value })}
-              required
-            />
+            <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+              <input
+                className="input"
+                value={formData.patientId}
+                readOnly
+                required
+                style={{ flex: 1 }}
+              />
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={handleRefreshPatientId}
+                style={{
+                  padding: '8px 16px',
+                  minWidth: 'auto',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '5px'
+                }}
+                title="Generate new Patient ID"
+              >
+                <svg
+                  width="16"
+                  height="16"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  style={{ display: 'block' }}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                  />
+                </svg>
+                Refresh
+              </button>
+            </div>
+            <small style={{ color: '#6b7280', fontSize: '0.875rem', marginTop: '5px', display: 'block' }}>
+              Auto-generated ID. Click refresh to generate a new one.
+            </small>
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>

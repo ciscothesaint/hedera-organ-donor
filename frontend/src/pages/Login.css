@@ -1,52 +1,309 @@
-.login-container {
+/* ============================================
+   ADMIN LOGIN - MEDICAL THEME
+   ============================================ */
+
+.admin-login-container {
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--gradient-medical);
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
 }
 
-.login-card {
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+/* Medical Pattern Background */
+.admin-login-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image:
+    repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 100px,
+      rgba(255, 255, 255, 0.03) 100px,
+      rgba(255, 255, 255, 0.03) 102px
+    ),
+    repeating-linear-gradient(
+      -45deg,
+      transparent,
+      transparent 100px,
+      rgba(255, 255, 255, 0.03) 100px,
+      rgba(255, 255, 255, 0.03) 102px
+    );
+  pointer-events: none;
+}
+
+/* Floating Medical Icon */
+.admin-login-container::after {
+  content: '⚕️';
+  position: absolute;
+  font-size: 300px;
+  opacity: 0.03;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-15deg);
+  pointer-events: none;
+  z-index: 0;
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes floatBackground {
+  0%, 100% {
+    transform: translate(-50%, -50%) rotate(-15deg) translateY(0);
+  }
+  50% {
+    transform: translate(-50%, -50%) rotate(-15deg) translateY(-20px);
+  }
+}
+
+/* ============================================
+   LOGIN CARD
+   ============================================ */
+
+.admin-login-card {
+  background: var(--bg-card);
+  border-radius: 24px;
+  box-shadow: var(--shadow-2xl);
   width: 100%;
-  max-width: 420px;
-  padding: 40px;
+  max-width: 480px;
+  padding: 48px;
+  position: relative;
+  z-index: 1;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  animation: slideIn 0.5s ease-out;
 }
 
-.login-header {
+.admin-login-card:hover {
+  box-shadow: var(--shadow-2xl), 0 0 0 1px rgba(14, 165, 233, 0.2);
+  transform: translateY(-2px);
+  transition: all var(--transition-normal);
+}
+
+/* ============================================
+   LOGIN HEADER
+   ============================================ */
+
+.admin-login-header {
   text-align: center;
-  margin-bottom: 30px;
+  margin-bottom: 40px;
+  position: relative;
 }
 
-.login-header h1 {
-  font-size: 28px;
+.medical-symbol {
+  font-size: 64px;
+  margin-bottom: 16px;
+  filter: drop-shadow(0 4px 8px rgba(14, 165, 233, 0.3));
+  animation: pulse 3s ease-in-out infinite;
+  display: inline-block;
+}
+
+.admin-login-header h1 {
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--text-primary);
   margin-bottom: 8px;
-  color: var(--text-color);
+  letter-spacing: -0.5px;
+  background: var(--gradient-medical);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
-.login-header p {
-  color: #6b7280;
+.admin-login-header p {
+  color: var(--text-secondary);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+/* ============================================
+   LOGIN FORM
+   ============================================ */
+
+.admin-login-form {
+  margin-bottom: 32px;
+}
+
+.admin-login-form .form-group {
+  margin-bottom: 24px;
+}
+
+.admin-login-form .label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 10px;
 }
 
-.login-form {
-  margin-bottom: 20px;
+.admin-login-form .label svg {
+  color: var(--medical-primary);
+  flex-shrink: 0;
 }
 
-.btn-block {
-  width: 100%;
-  margin-top: 10px;
+.admin-login-form .input {
+  font-size: 15px;
+  height: 48px;
+  transition: all var(--transition-normal);
 }
 
-.login-footer {
-  text-align: center;
-  padding-top: 20px;
-  border-top: 1px solid var(--border-color);
+.admin-login-form .input::placeholder {
+  color: var(--text-tertiary);
 }
 
-.login-footer p {
-  color: #6b7280;
-  font-size: 13px;
+.admin-login-form .btn-block {
+  height: 52px;
+  font-size: 16px;
+  font-weight: 700;
+  margin-top: 32px;
+  position: relative;
+  overflow: hidden;
+}
+
+.admin-login-form .btn-block::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.admin-login-form .btn-block:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+/* ============================================
+   LOGIN FOOTER
+   ============================================ */
+
+.admin-login-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-top: 24px;
+  border-top: 2px solid var(--border-light);
+}
+
+.security-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: linear-gradient(135deg, var(--clinical-gray-50) 0%, var(--clinical-gray-100) 100%);
+  border-radius: 10px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  font-weight: 600;
+  border: 1px solid var(--border-light);
+}
+
+.security-badge svg {
+  color: var(--success-green);
+  flex-shrink: 0;
+}
+
+.powered-by {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: var(--text-tertiary);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.powered-by svg {
+  color: var(--medical-primary);
+  flex-shrink: 0;
+  animation: spin 8s linear infinite;
+}
+
+/* ============================================
+   ALERT OVERRIDE FOR LOGIN
+   ============================================ */
+
+.admin-login-form .alert {
+  margin-bottom: 24px;
+  animation: slideIn 0.3s ease-out;
+}
+
+/* ============================================
+   LOADING STATE
+   ============================================ */
+
+.admin-login-form .btn-block:disabled {
+  position: relative;
+}
+
+.admin-login-form .btn-block .spinner-sm {
+  display: inline-block;
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+
+@media (max-width: 768px) {
+  .admin-login-card {
+    padding: 40px 32px;
+    border-radius: 20px;
+  }
+
+  .admin-login-header h1 {
+    font-size: 28px;
+  }
+
+  .medical-symbol {
+    font-size: 56px;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-login-container {
+    padding: 16px;
+  }
+
+  .admin-login-card {
+    padding: 32px 24px;
+    border-radius: 16px;
+  }
+
+  .admin-login-header h1 {
+    font-size: 24px;
+  }
+
+  .medical-symbol {
+    font-size: 48px;
+    margin-bottom: 12px;
+  }
+
+  .admin-login-header p {
+    font-size: 14px;
+  }
+
+  .admin-login-form .btn-block {
+    height: 48px;
+    font-size: 15px;
+  }
+
+  .security-badge,
+  .powered-by {
+    font-size: 11px;
+  }
 }

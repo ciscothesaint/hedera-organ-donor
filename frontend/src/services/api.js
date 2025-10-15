@@ -101,4 +101,12 @@ export const mirrorAPI = {
     api.post('/mirror/cache/invalidate', { pattern }),
 };
 
+// DAO User Management API (Admin only)
+export const daoAdminAPI = {
+  getDaoUsers: (status) => api.get('/admin/dao-users', { params: { status } }),
+  authorizeUser: (userId, votingPower) => api.post(`/admin/dao-users/${userId}/authorize`, { votingPower }),
+  revokeUser: (userId) => api.post(`/admin/dao-users/${userId}/revoke`),
+  updateVotingPower: (userId, votingPower) => api.patch(`/admin/dao-users/${userId}/voting-power`, { votingPower }),
+};
+
 export default api;

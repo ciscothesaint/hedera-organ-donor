@@ -1,4 +1,5 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { mirrorAPI } from '../services/api';
 
 /**
  * React hook for querying Hedera Mirror Node
@@ -24,6 +25,10 @@ export function useMirrorQuery(queryFn, options = {}) {
   const [error, setError] = useState(null);
   const [cacheInfo, setCacheInfo] = useState(null);
 
+  // Use ref to store queryFn to avoid dependency issues
+  const queryFnRef = useRef(queryFn);
+  queryFnRef.current = queryFn;
+
   const fetchData = useCallback(async () => {
     if (!enabled) return;
 
@@ -31,7 +36,7 @@ export function useMirrorQuery(queryFn, options = {}) {
       setLoading(true);
       setError(null);
 
-      const response = await queryFn();
+      const response = await queryFnRef.current();
 
       // Extract data and cache info from response
       const responseData = response.data;
@@ -53,12 +58,13 @@ export function useMirrorQuery(queryFn, options = {}) {
     } finally {
       setLoading(false);
     }
-  }, [queryFn, enabled, ...dependencies]);
+  }, [enabled]);
 
   // Initial fetch and dependency-triggered refetch
   useEffect(() => {
     fetchData();
-  }, [fetchData]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fetchData, ...dependencies]);
 
   // Auto-refetch interval
   useEffect(() => {
@@ -82,8 +88,6 @@ export function useMirrorQuery(queryFn, options = {}) {
  * Hook specifically for waitlist queries
  */
 export function useMirrorWaitlist(organType) {
-  const { mirrorAPI } = require('../services/api');
-
   return useMirrorQuery(
     () => mirrorAPI.getWaitlist(organType),
     {
@@ -97,12 +101,10 @@ export function useMirrorWaitlist(organType) {
  * Hook specifically for statistics queries
  */
 export function useMirrorStats() {
-  const { mirrorAPI } = require('../services/api');
-
   return useMirrorQuery(
     () => mirrorAPI.getStats(),
     {
-      refetchInterval: 15000, // Auto-refresh every 15 seconds
+      refetchInterval: 0, // Disabled auto-refresh - data is cached, use manual refresh button
     }
   );
 }
@@ -111,8 +113,6 @@ export function useMirrorStats() {
  * Hook for patient position queries
  */
 export function useMirrorPatientPosition(patientHash, organType) {
-  const { mirrorAPI } = require('../services/api');
-
   return useMirrorQuery(
     () => mirrorAPI.getPatientPosition(patientHash, organType),
     {

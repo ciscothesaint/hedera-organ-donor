@@ -1,0 +1,583 @@
+.voting-interface {
+    background: var(--bg-card);
+    border: 3px solid var(--border-light);
+    border-radius: 20px;
+    padding: 32px;
+    margin-top: 32px;
+    box-shadow: var(--shadow-lg);
+    position: relative;
+    overflow: hidden;
+}
+
+.voting-interface::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 6px;
+    background: var(--gradient-medical);
+}
+
+.voting-interface.disabled,
+.voting-interface.voted {
+    background: linear-gradient(135deg, var(--clinical-gray-50) 0%, var(--clinical-gray-100) 100%);
+    border-color: var(--border-medium);
+}
+
+/* ============================================
+   HEADER
+   ============================================ */
+
+.voting-header {
+    margin-bottom: 28px;
+}
+
+.voting-header h3 {
+    margin: 0 0 12px 0;
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.voting-header h3::before {
+    content: '🗳️';
+    font-size: 28px;
+}
+
+.voting-description {
+    margin: 0;
+    font-size: 15px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    font-weight: 500;
+}
+
+/* ============================================
+   ERROR MESSAGE
+   ============================================ */
+
+.voting-error {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 20px;
+    background: linear-gradient(135deg, #FEF2F2 0%, #FEE2E2 100%);
+    border: 2px solid var(--emergency-red);
+    border-radius: 12px;
+    margin-bottom: 24px;
+    color: var(--emergency-red);
+    font-size: 14px;
+    font-weight: 600;
+    animation: slideIn 0.3s ease-out;
+}
+
+.voting-error svg {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+}
+
+/* ============================================
+   VOTING BUTTONS - Large Medical Style
+   ============================================ */
+
+.voting-buttons {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.vote-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 32px 20px;
+    background: var(--bg-card);
+    border: 3px solid;
+    border-radius: 16px;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    font-family: inherit;
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+}
+
+.vote-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, transparent 0%, rgba(255, 255, 255, 0.1) 100%);
+    opacity: 0;
+    transition: opacity var(--transition-normal);
+}
+
+.vote-btn:hover:not(:disabled)::before {
+    opacity: 1;
+}
+
+.vote-btn:hover:not(:disabled) {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-xl);
+}
+
+.vote-btn:active:not(:disabled) {
+    transform: translateY(-2px);
+}
+
+.vote-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+.vote-btn svg {
+    width: 48px;
+    height: 48px;
+    transition: transform var(--transition-normal);
+}
+
+.vote-btn:hover:not(:disabled) svg {
+    transform: scale(1.15);
+}
+
+.vote-btn span {
+    font-size: 18px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.vote-btn small {
+    font-size: 13px;
+    color: var(--text-secondary);
+    font-weight: 600;
+}
+
+/* ============================================
+   APPROVE BUTTON - Green Medical
+   ============================================ */
+
+.vote-btn.approve {
+    border-color: var(--success-green);
+}
+
+.vote-btn.approve:hover:not(:disabled) {
+    background: linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%);
+    border-color: var(--success-green-light);
+}
+
+.vote-btn.approve svg {
+    color: var(--success-green);
+}
+
+.vote-btn.approve span {
+    color: var(--success-green);
+}
+
+/* ============================================
+   REJECT BUTTON - Red Medical
+   ============================================ */
+
+.vote-btn.reject {
+    border-color: var(--emergency-red);
+}
+
+.vote-btn.reject:hover:not(:disabled) {
+    background: linear-gradient(135deg, #FEF2F2 0%, #FEE2E2 100%);
+    border-color: var(--emergency-red-light);
+}
+
+.vote-btn.reject svg {
+    color: var(--emergency-red);
+}
+
+.vote-btn.reject span {
+    color: var(--emergency-red);
+}
+
+/* ============================================
+   ABSTAIN BUTTON - Gray Medical
+   ============================================ */
+
+.vote-btn.abstain {
+    border-color: var(--clinical-gray-400);
+}
+
+.vote-btn.abstain:hover:not(:disabled) {
+    background: linear-gradient(135deg, var(--clinical-gray-50) 0%, var(--clinical-gray-100) 100%);
+    border-color: var(--clinical-gray-500);
+}
+
+.vote-btn.abstain svg {
+    color: var(--clinical-gray-500);
+}
+
+.vote-btn.abstain span {
+    color: var(--clinical-gray-600);
+}
+
+/* ============================================
+   DISABLED & VOTED STATES
+   ============================================ */
+
+.voting-disabled-message,
+.already-voted-message {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    padding: 48px 24px;
+    text-align: center;
+}
+
+.voting-disabled-message .status-badge {
+    padding: 8px 20px;
+    border-radius: 24px;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.voting-disabled-message p {
+    margin: 0;
+    color: var(--text-secondary);
+    font-size: 16px;
+    font-weight: 600;
+}
+
+/* Already Voted State */
+.already-voted-message {
+    animation: slideIn 0.5s ease-out;
+}
+
+.already-voted-message .checkmark-icon {
+    width: 72px;
+    height: 72px;
+    color: var(--success-green);
+    background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+    border-radius: 50%;
+    padding: 16px;
+    box-shadow: var(--shadow-md);
+    animation: pulse 2s ease-in-out infinite;
+}
+
+.already-voted-message p {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--success-green);
+}
+
+.already-voted-message small {
+    color: var(--text-secondary);
+    font-size: 15px;
+    font-weight: 500;
+}
+
+/* ============================================
+   REASONING INPUT SECTION
+   ============================================ */
+
+.reasoning-input-section {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    animation: slideIn 0.4s ease-out;
+}
+
+.selected-choice-banner {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 20px;
+    background: linear-gradient(135deg, var(--clinical-gray-50) 0%, var(--clinical-gray-100) 100%);
+    border-radius: 12px;
+    font-size: 15px;
+    border-left: 4px solid var(--medical-primary);
+}
+
+.selected-choice-banner span {
+    color: var(--text-secondary);
+    font-weight: 600;
+}
+
+.selected-choice-banner strong {
+    font-weight: 800;
+    font-size: 16px;
+    text-transform: uppercase;
+}
+
+.choice-approve {
+    color: var(--success-green);
+}
+
+.choice-reject {
+    color: var(--emergency-red);
+}
+
+.choice-abstain {
+    color: var(--clinical-gray-600);
+}
+
+/* ============================================
+   REASONING FIELD
+   ============================================ */
+
+.reasoning-field {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.reasoning-field label {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.reasoning-field label::before {
+    content: '📝';
+    font-size: 20px;
+}
+
+.reasoning-field label .required {
+    color: var(--emergency-red);
+    font-size: 18px;
+}
+
+.reasoning-field textarea {
+    padding: 16px;
+    border: 2px solid var(--border-light);
+    border-radius: 12px;
+    font-family: inherit;
+    font-size: 15px;
+    line-height: 1.7;
+    resize: vertical;
+    min-height: 140px;
+    transition: all var(--transition-normal);
+    background: var(--bg-card);
+}
+
+.reasoning-field textarea:hover {
+    border-color: var(--border-medium);
+}
+
+.reasoning-field textarea:focus {
+    outline: none;
+    border-color: var(--medical-primary);
+    box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+}
+
+.reasoning-field textarea:disabled {
+    background: var(--clinical-gray-50);
+    cursor: not-allowed;
+}
+
+.character-count {
+    font-size: 13px;
+    color: var(--text-tertiary);
+    text-align: right;
+    font-weight: 600;
+}
+
+.character-count .warning {
+    color: var(--emergency-red);
+    font-weight: 700;
+}
+
+/* ============================================
+   ACTIONS
+   ============================================ */
+
+.reasoning-actions {
+    display: flex;
+    gap: 16px;
+    justify-content: flex-end;
+}
+
+.btn-cancel,
+.btn-submit-vote {
+    padding: 14px 28px;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    border: none;
+    font-family: inherit;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: var(--shadow-sm);
+}
+
+.btn-cancel {
+    background: var(--bg-card);
+    border: 2px solid var(--border-medium);
+    color: var(--text-primary);
+}
+
+.btn-cancel:hover:not(:disabled) {
+    background: var(--clinical-gray-50);
+    border-color: var(--border-dark);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.btn-submit-vote {
+    background: var(--gradient-medical);
+    color: white;
+}
+
+.btn-submit-vote:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg), 0 0 0 3px rgba(14, 165, 233, 0.2);
+}
+
+.btn-submit-vote:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.btn-submit-vote:disabled {
+    background: linear-gradient(135deg, var(--clinical-gray-300) 0%, var(--clinical-gray-400) 100%);
+    cursor: not-allowed;
+    transform: none;
+}
+
+.btn-submit-vote svg {
+    width: 20px;
+    height: 20px;
+}
+
+/* ============================================
+   SPINNER
+   ============================================ */
+
+.spinner {
+    width: 18px;
+    height: 18px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+/* ============================================
+   DISCLAIMER
+   ============================================ */
+
+.voting-disclaimer {
+    display: flex;
+    gap: 12px;
+    padding: 16px;
+    background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%);
+    border-radius: 12px;
+    font-size: 13px;
+    color: var(--info-blue);
+    border: 1px solid var(--info-blue-light);
+    margin-top: 20px;
+}
+
+.voting-disclaimer svg {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.voting-disclaimer small {
+    line-height: 1.6;
+    font-weight: 600;
+}
+
+/* ============================================
+   STATUS BADGES
+   ============================================ */
+
+.status-badge.status-approved {
+    background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+    color: #065F46;
+    border: 2px solid var(--success-green);
+}
+
+.status-badge.status-rejected {
+    background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+    color: #991B1B;
+    border: 2px solid var(--emergency-red);
+}
+
+.status-badge.status-expired {
+    background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+    color: #92400E;
+    border: 2px solid var(--urgent-orange);
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+
+@media (max-width: 768px) {
+    .voting-interface {
+        padding: 24px;
+    }
+
+    .voting-buttons {
+        grid-template-columns: 1fr;
+    }
+
+    .vote-btn {
+        padding: 28px 20px;
+    }
+
+    .vote-btn svg {
+        width: 40px;
+        height: 40px;
+    }
+
+    .vote-btn span {
+        font-size: 16px;
+    }
+
+    .reasoning-actions {
+        flex-direction: column-reverse;
+    }
+
+    .btn-cancel,
+    .btn-submit-vote {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .voting-header h3 {
+        font-size: 20px;
+    }
+
+    .voting-header h3::before {
+        font-size: 24px;
+    }
+}
+
+@media (max-width: 480px) {
+    .voting-interface {
+        padding: 20px;
+    }
+
+    .voting-disabled-message,
+    .already-voted-message {
+        padding: 32px 16px;
+    }
+}

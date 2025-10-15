@@ -1,6 +1,6 @@
 const express = require('express');
 const Patient = require('../db/models/Patient');
-const { createHederaClient } = require('../hedera/hederaClient');
+const hederaClient = require('../hedera/client');
 const { registerPatient: registerOnChain } = require('../hedera/contractService');
 const { logPatientRegistration } = require('../hedera/topicService');
 const { authenticate, authorize } = require('../middleware/auth');
@@ -13,15 +13,24 @@ const router = express.Router();
  * POST /api/patients
  */
 router.post('/', authenticate, authorize('canRegisterPatients'), validatePatientRegistration, async (req, res) => {
-    let client;
-
     try {
         console.log('📋 POST / received:', JSON.stringify(req.body, null, 2));
         const patient = new Patient(req.body);
 
         // Register on blockchain
-        client = createHederaClient();
+        const client = hederaClient.getClient();
         const contractId = process.env.WAITLIST_CONTRACT_ID;
+
+        console.log('🔍 Registering patient on blockchain with data:');
+        console.log('  - patientId:', patient.patientId);
+        console.log('  - firstName:', patient.personalInfo.firstName);
+        console.log('  - lastName:', patient.personalInfo.lastName);
+        console.log('  - organType:', patient.medicalInfo.organType);
+        console.log('  - urgencyLevel:', patient.medicalInfo.urgencyLevel, '(must be 1-5)');
+        console.log('  - medicalScore:', patient.medicalInfo.medicalScore);
+        console.log('  - bloodType:', patient.medicalInfo.bloodType);
+        console.log('  - weight:', patient.medicalInfo.weight);
+        console.log('  - height:', patient.medicalInfo.height);
 
         const result = await registerOnChain(client, contractId, {
             patientId: patient.patientId,
@@ -68,8 +77,6 @@ router.post('/', authenticate, authorize('canRegisterPatients'), validatePatient
         console.error('❌ Error in POST /:', error);
         console.error('Stack:', error.stack);
         res.status(500).json({ error: error.message });
-    } finally {
-        if (client) await client.close();
     }
 });
 
@@ -121,8 +128,6 @@ router.get('/:patientId', authenticate, async (req, res) => {
  * PUT /api/patients/:patientId/urgency
  */
 router.put('/:patientId/urgency', authenticate, authorize('canUpdateUrgency'), validateUrgencyUpdate, async (req, res) => {
-    let client;
-
     try {
         const { urgencyLevel } = req.body;
         const patient = await Patient.findOne({ patientId: req.params.patientId });
@@ -134,7 +139,7 @@ router.put('/:patientId/urgency', authenticate, authorize('canUpdateUrgency'), v
         const oldUrgency = patient.medicalInfo.urgencyLevel;
 
         // Update on blockchain
-        client = createHederaClient();
+        const client = hederaClient.getClient();
         const contractId = process.env.WAITLIST_CONTRACT_ID;
 
         const { updateUrgency } = require('../hedera/contractService');
@@ -152,8 +157,6 @@ router.put('/:patientId/urgency', authenticate, authorize('canUpdateUrgency'), v
         });
     } catch (error) {
         res.status(500).json({ error: error.message });
-    } finally {
-        if (client) await client.close();
     }
 });
 

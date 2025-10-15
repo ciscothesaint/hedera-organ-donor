@@ -1,0 +1,1129 @@
+/* ============================================
+   WAITLIST SECTION - ENHANCED MEDICAL THEME
+   ============================================ */
+
+.waitlist-section {
+  padding: 80px 0;
+  animation: fadeIn 0.8s ease-out;
+}
+
+/* Waitlist Header */
+.waitlist-header {
+  text-align: center;
+  margin-bottom: 60px;
+  animation: slideIn 0.6s ease-out;
+}
+
+.waitlist-header h2 {
+  font-size: 2.8rem;
+  font-weight: 900;
+  background: var(--gradient-medical);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 16px;
+  letter-spacing: -0.5px;
+}
+
+.waitlist-subtitle {
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  font-weight: 500;
+  line-height: 1.6;
+}
+
+/* ============================================
+   ORGAN TYPE TABS - ENHANCED
+   ============================================ */
+
+.waitlist-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 50px;
+  flex-wrap: wrap;
+  animation: slideIn 0.6s ease-out 0.2s backwards;
+}
+
+.tab-button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 28px;
+  border: 2px solid var(--border-light);
+  background: var(--bg-card);
+  border-radius: 40px;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  box-shadow: var(--shadow-sm);
+  position: relative;
+  overflow: hidden;
+}
+
+.tab-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: var(--gradient-medical);
+  transition: left 0.4s;
+  z-index: 0;
+}
+
+.tab-button:hover {
+  border-color: var(--medical-primary);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-lg);
+}
+
+.tab-button.active {
+  background: var(--gradient-medical);
+  color: white;
+  border-color: var(--medical-primary-dark);
+  box-shadow: var(--shadow-lg);
+}
+
+.tab-button.active::before {
+  left: 0;
+}
+
+.tab-icon,
+.tab-label {
+  position: relative;
+  z-index: 1;
+}
+
+.tab-icon {
+  font-size: 1.5rem;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+/* ============================================
+   WAITLIST CONTENT CARD
+   ============================================ */
+
+.waitlist-content {
+  background: var(--bg-card);
+  border-radius: 24px;
+  padding: 40px;
+  box-shadow: var(--shadow-lg);
+  min-height: 500px;
+  border: 1px solid var(--border-light);
+  animation: slideIn 0.6s ease-out 0.4s backwards;
+  position: relative;
+}
+
+/* Medical pattern overlay */
+.waitlist-content::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle at center, rgba(14, 165, 233, 0.05) 0%, transparent 70%);
+  border-radius: 50%;
+  transform: translate(50px, -50px);
+  pointer-events: none;
+}
+
+/* ============================================
+   LOADING & ERROR STATES
+   ============================================ */
+
+.waitlist-loading,
+.waitlist-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 500px;
+  gap: 24px;
+}
+
+.waitlist-loading .loading-spinner {
+  width: 60px;
+  height: 60px;
+  border-width: 5px;
+}
+
+.waitlist-error {
+  color: var(--emergency-red);
+}
+
+.waitlist-error button {
+  margin-top: 16px;
+  padding: 12px 28px;
+  background: var(--gradient-danger);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  box-shadow: var(--shadow-md);
+}
+
+.waitlist-error button:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-xl);
+}
+
+/* ============================================
+   EMPTY WAITLIST STATE
+   ============================================ */
+
+.empty-waitlist {
+  text-align: center;
+  padding: 80px 20px;
+  animation: fadeIn 0.8s ease-out;
+}
+
+.empty-icon {
+  font-size: 5rem;
+  margin-bottom: 24px;
+  opacity: 0.2;
+  animation: float 3s ease-in-out infinite;
+}
+
+.empty-waitlist h3 {
+  font-size: 1.6rem;
+  color: var(--text-primary);
+  margin-bottom: 12px;
+  font-weight: 700;
+}
+
+.empty-waitlist p {
+  color: var(--text-secondary);
+  font-size: 1.05rem;
+}
+
+/* ============================================
+   TABLE INFO HEADER
+   ============================================ */
+
+.table-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+  padding-bottom: 20px;
+  border-bottom: 3px solid var(--clinical-gray-100);
+  animation: slideIn 0.4s ease-out;
+}
+
+.table-count {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.table-count::before {
+  content: '📊';
+  font-size: 1.5rem;
+}
+
+.table-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+  color: var(--success-green-dark);
+  padding: 10px 20px;
+  border-radius: 24px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  border: 2px solid var(--success-green-light);
+  box-shadow: var(--shadow-sm);
+  animation: pulse 3s ease-in-out infinite;
+}
+
+.verified-icon {
+  font-size: 1.1rem;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+/* ============================================
+   TABLE WRAPPER & DESIGN
+   ============================================ */
+
+.waitlist-table-wrapper {
+  overflow-x: auto;
+  border-radius: 16px;
+  animation: slideIn 0.6s ease-out 0.2s backwards;
+}
+
+.waitlist-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.waitlist-table thead {
+  background: var(--clinical-gray-50);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.waitlist-table th {
+  padding: 20px;
+  text-align: left;
+  font-weight: 800;
+  color: var(--text-primary);
+  border-bottom: 3px solid var(--medical-primary);
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  background: var(--clinical-gray-50);
+}
+
+.waitlist-table th:first-child {
+  border-top-left-radius: 12px;
+}
+
+.waitlist-table th:last-child {
+  border-top-right-radius: 12px;
+}
+
+.waitlist-table td {
+  padding: 24px 20px;
+  border-bottom: 1px solid var(--border-light);
+  color: var(--text-primary);
+  font-size: 0.95rem;
+}
+
+.waitlist-table tbody tr {
+  transition: all var(--transition-normal);
+  background: white;
+  animation: slideIn 0.4s ease-out;
+  animation-fill-mode: backwards;
+}
+
+/* Staggered row animations */
+.waitlist-table tbody tr:nth-child(1) { animation-delay: 0.05s; }
+.waitlist-table tbody tr:nth-child(2) { animation-delay: 0.1s; }
+.waitlist-table tbody tr:nth-child(3) { animation-delay: 0.15s; }
+.waitlist-table tbody tr:nth-child(4) { animation-delay: 0.2s; }
+.waitlist-table tbody tr:nth-child(5) { animation-delay: 0.25s; }
+
+/* Striped rows with hover effect */
+.waitlist-table tbody tr:nth-child(even) {
+  background: var(--clinical-gray-50);
+}
+
+.waitlist-table tbody tr:hover {
+  background: linear-gradient(90deg, rgba(14, 165, 233, 0.08), rgba(6, 182, 212, 0.08));
+  transform: scale(1.01);
+  box-shadow: var(--shadow-md);
+}
+
+/* ============================================
+   POSITION BADGE - ENHANCED WITH MEDALS
+   ============================================ */
+
+.position-badge {
+  background: var(--gradient-medical);
+  color: white;
+  padding: 10px 18px;
+  border-radius: 24px;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 60px;
+  justify-content: center;
+  box-shadow: var(--shadow-md);
+  font-size: 1.05rem;
+  transition: all var(--transition-normal);
+}
+
+.waitlist-table tbody tr:hover .position-badge {
+  transform: scale(1.1);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Medal system for top 3 positions */
+.waitlist-table tbody tr:nth-child(1) .position-badge {
+  background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+  color: #654321;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.waitlist-table tbody tr:nth-child(1) .position-badge::before {
+  content: '🥇';
+  font-size: 1.2rem;
+}
+
+.waitlist-table tbody tr:nth-child(2) .position-badge {
+  background: linear-gradient(135deg, #C0C0C0 0%, #A8A8A8 100%);
+  color: #333;
+}
+
+.waitlist-table tbody tr:nth-child(2) .position-badge::before {
+  content: '🥈';
+  font-size: 1.2rem;
+}
+
+.waitlist-table tbody tr:nth-child(3) .position-badge {
+  background: linear-gradient(135deg, #CD7F32 0%, #B8860B 100%);
+  color: white;
+}
+
+.waitlist-table tbody tr:nth-child(3) .position-badge::before {
+  content: '🥉';
+  font-size: 1.2rem;
+}
+
+/* ============================================
+   PATIENT HASH LINK
+   ============================================ */
+
+.patient-hash {
+  font-family: 'Courier New', monospace;
+  color: var(--medical-primary);
+  text-decoration: none;
+  font-size: 0.95rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  padding: 6px 12px;
+  background: var(--clinical-gray-50);
+  border-radius: 8px;
+  transition: all var(--transition-normal);
+  border: 1px solid transparent;
+}
+
+.patient-hash:hover {
+  background: linear-gradient(135deg, #E0F2FE 0%, #BAE6FD 100%);
+  border-color: var(--medical-primary-light);
+  transform: translateX(5px);
+  text-decoration: none;
+}
+
+.external-link {
+  font-size: 0.9rem;
+  transition: transform var(--transition-fast);
+}
+
+.patient-hash:hover .external-link {
+  transform: translate(2px, -2px);
+}
+
+/* ============================================
+   BLOOD TYPE BADGE
+   ============================================ */
+
+.blood-type {
+  font-weight: 800;
+  color: var(--emergency-red-dark);
+  background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+  padding: 8px 16px;
+  border-radius: 16px;
+  display: inline-block;
+  font-size: 1rem;
+  border: 2px solid var(--emergency-red-light);
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-normal);
+}
+
+.waitlist-table tbody tr:hover .blood-type {
+  transform: scale(1.05);
+  box-shadow: var(--shadow-md);
+}
+
+/* ============================================
+   URGENCY BADGES - COLOR-CODED
+   ============================================ */
+
+.urgency-badge {
+  padding: 10px 18px;
+  border-radius: 16px;
+  font-size: 0.85rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  letter-spacing: 0.5px;
+  box-shadow: var(--shadow-sm);
+  border: 2px solid transparent;
+  transition: all var(--transition-normal);
+}
+
+.waitlist-table tbody tr:hover .urgency-badge {
+  transform: scale(1.05);
+  box-shadow: var(--shadow-md);
+}
+
+.urgency-critical {
+  background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+  color: #991B1B;
+  border-color: #FCA5A5;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.urgency-critical::before {
+  content: '🚨';
+  font-size: 1rem;
+}
+
+.urgency-high {
+  background: linear-gradient(135deg, #FFEDD5 0%, #FED7AA 100%);
+  color: #9A3412;
+  border-color: #FDBA74;
+}
+
+.urgency-high::before {
+  content: '⚠️';
+  font-size: 1rem;
+}
+
+.urgency-medium {
+  background: linear-gradient(135deg, #FEF9C3 0%, #FEF08A 100%);
+  color: #713F12;
+  border-color: #FDE047;
+}
+
+.urgency-medium::before {
+  content: '⏰';
+  font-size: 1rem;
+}
+
+.urgency-routine {
+  background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+  color: #14532D;
+  border-color: #6EE7B7;
+}
+
+.urgency-routine::before {
+  content: '✓';
+  font-size: 1rem;
+}
+
+/* ============================================
+   BLOCKCHAIN VERIFICATION SECTION
+   ============================================ */
+
+.blockchain-verification {
+  padding: 80px 0;
+  background: var(--clinical-gray-50);
+  border-radius: 24px;
+  margin: 100px 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.blockchain-verification::before {
+  content: '⚕️';
+  position: absolute;
+  font-size: 500px;
+  opacity: 0.02;
+  right: -100px;
+  top: 50%;
+  transform: translateY(-50%) rotate(-15deg);
+  pointer-events: none;
+}
+
+.verification-header {
+  text-align: center;
+  margin-bottom: 60px;
+  position: relative;
+  z-index: 1;
+}
+
+.verification-header h2 {
+  font-size: 2.8rem;
+  font-weight: 900;
+  background: var(--gradient-medical);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 16px;
+  letter-spacing: -0.5px;
+}
+
+.verification-header p {
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+/* ============================================
+   CONTRACT CARDS GRID
+   ============================================ */
+
+.contracts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 32px;
+  padding: 0 40px;
+  margin-bottom: 60px;
+  position: relative;
+  z-index: 1;
+}
+
+.contract-card {
+  background: var(--bg-card);
+  border-radius: 20px;
+  padding: 36px;
+  box-shadow: var(--shadow-lg);
+  transition: all var(--transition-normal);
+  border: 2px solid var(--border-light);
+  position: relative;
+  overflow: hidden;
+}
+
+.contract-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 5px;
+  background: var(--gradient-medical);
+}
+
+.contract-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: var(--shadow-2xl);
+  border-color: var(--medical-primary-light);
+}
+
+.contract-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+.contract-header h3 {
+  font-size: 1.4rem;
+  color: var(--text-primary);
+  font-weight: 800;
+}
+
+.verified-badge {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+  color: var(--success-green-dark);
+  padding: 6px 14px;
+  border-radius: 16px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  border: 2px solid var(--success-green-light);
+  animation: pulse 3s ease-in-out infinite;
+}
+
+.contract-description {
+  color: var(--text-secondary);
+  margin-bottom: 24px;
+  line-height: 1.7;
+  font-size: 0.95rem;
+}
+
+.contract-id {
+  background: var(--clinical-gray-50);
+  padding: 18px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border: 1px solid var(--border-light);
+}
+
+.id-label {
+  font-size: 0.8rem;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 700;
+}
+
+.id-value {
+  font-family: 'Courier New', monospace;
+  color: var(--medical-primary);
+  font-size: 0.95rem;
+  font-weight: 700;
+  word-break: break-all;
+}
+
+/* ============================================
+   VERIFICATION FOOTER
+   ============================================ */
+
+.verification-footer {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 32px;
+  padding: 0 40px;
+  position: relative;
+  z-index: 1;
+}
+
+.footer-card {
+  background: var(--bg-card);
+  padding: 36px;
+  border-radius: 20px;
+  box-shadow: var(--shadow-lg);
+  border: 2px solid var(--border-light);
+  transition: all var(--transition-normal);
+}
+
+.footer-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-xl);
+  border-color: var(--medical-primary-light);
+}
+
+.footer-card h4 {
+  font-size: 1.4rem;
+  color: var(--text-primary);
+  margin-bottom: 20px;
+  font-weight: 800;
+}
+
+.footer-card p {
+  color: var(--text-secondary);
+  line-height: 1.8;
+  margin-bottom: 20px;
+  font-size: 0.95rem;
+}
+
+.footer-card ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+.footer-card li {
+  padding: 10px 0;
+  color: var(--text-primary);
+  position: relative;
+  padding-left: 32px;
+  font-size: 0.95rem;
+}
+
+.footer-card li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: var(--success-green);
+  font-weight: 900;
+  font-size: 1.3rem;
+}
+
+/* ============================================
+   HOW IT WORKS SECTION
+   ============================================ */
+
+.how-it-works {
+  padding: 80px 0;
+}
+
+.how-header {
+  text-align: center;
+  margin-bottom: 70px;
+}
+
+.how-header h2 {
+  font-size: 2.8rem;
+  font-weight: 900;
+  background: var(--gradient-medical);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 16px;
+  letter-spacing: -0.5px;
+}
+
+.how-header p {
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+/* ============================================
+   STEPS TIMELINE
+   ============================================ */
+
+.steps-timeline {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 40px;
+  margin-bottom: 60px;
+}
+
+.step-card {
+  background: var(--bg-card);
+  border-radius: 20px;
+  padding: 40px 30px;
+  box-shadow: var(--shadow-lg);
+  position: relative;
+  text-align: center;
+  transition: all var(--transition-normal);
+  border: 2px solid var(--border-light);
+  animation: slideIn 0.6s ease-out;
+  animation-fill-mode: backwards;
+}
+
+.step-card:nth-child(1) { animation-delay: 0.1s; }
+.step-card:nth-child(2) { animation-delay: 0.2s; }
+.step-card:nth-child(3) { animation-delay: 0.3s; }
+.step-card:nth-child(4) { animation-delay: 0.4s; }
+
+.step-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: var(--shadow-2xl);
+  border-color: var(--medical-primary-light);
+}
+
+.step-number {
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 60px;
+  background: var(--gradient-medical);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  font-weight: 900;
+  box-shadow: var(--shadow-xl);
+  border: 4px solid white;
+}
+
+.step-icon {
+  font-size: 3.5rem;
+  margin: 35px 0 24px;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+}
+
+.step-title {
+  font-size: 1.4rem;
+  color: var(--text-primary);
+  margin-bottom: 16px;
+  font-weight: 800;
+}
+
+.step-description {
+  color: var(--text-secondary);
+  line-height: 1.7;
+  margin-bottom: 24px;
+  font-size: 0.95rem;
+}
+
+.step-details {
+  list-style: none;
+  text-align: left;
+  padding: 0;
+}
+
+.step-details li {
+  padding: 8px 0;
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.detail-bullet {
+  color: var(--success-green);
+  font-weight: 900;
+  font-size: 1.2rem;
+}
+
+/* ============================================
+   HOW IT WORKS FOOTER
+   ============================================ */
+
+.how-footer {
+  margin-top: 60px;
+}
+
+.footer-highlight {
+  background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+  padding: 36px;
+  border-radius: 20px;
+  border-left: 6px solid var(--success-green);
+  box-shadow: var(--shadow-md);
+  border: 2px solid var(--success-green-light);
+}
+
+.footer-highlight h4 {
+  font-size: 1.4rem;
+  color: var(--text-primary);
+  margin-bottom: 16px;
+  font-weight: 800;
+}
+
+.footer-highlight p {
+  color: var(--text-primary);
+  line-height: 1.8;
+  font-size: 0.95rem;
+}
+
+/* ============================================
+   RECENT ACTIVITY SECTION
+   ============================================ */
+
+.recent-activity {
+  padding: 80px 0;
+}
+
+.activity-header {
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.activity-header h2 {
+  font-size: 2.8rem;
+  font-weight: 900;
+  background: var(--gradient-medical);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 16px;
+  letter-spacing: -0.5px;
+}
+
+.activity-header p {
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+.activity-loading,
+.activity-empty {
+  text-align: center;
+  padding: 60px 40px;
+  color: var(--text-secondary);
+  font-size: 1.05rem;
+}
+
+/* ============================================
+   ACTIVITY FEED
+   ============================================ */
+
+.activity-feed {
+  max-width: 1000px;
+  margin: 0 auto 40px;
+}
+
+.activity-item {
+  background: var(--bg-card);
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow-md);
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  transition: all var(--transition-normal);
+  border: 2px solid var(--border-light);
+  animation: slideIn 0.4s ease-out;
+  animation-fill-mode: backwards;
+}
+
+.activity-item:nth-child(1) { animation-delay: 0.05s; }
+.activity-item:nth-child(2) { animation-delay: 0.1s; }
+.activity-item:nth-child(3) { animation-delay: 0.15s; }
+.activity-item:nth-child(4) { animation-delay: 0.2s; }
+.activity-item:nth-child(5) { animation-delay: 0.25s; }
+
+.activity-item:hover {
+  transform: translateX(8px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--medical-primary-light);
+}
+
+.activity-icon {
+  font-size: 2.5rem;
+  flex-shrink: 0;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+.activity-content {
+  flex: 1;
+}
+
+.activity-message {
+  color: var(--text-primary);
+  font-weight: 600;
+  margin-bottom: 8px;
+  font-size: 1rem;
+}
+
+.activity-meta {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.activity-separator {
+  color: var(--text-tertiary);
+}
+
+.activity-link {
+  color: var(--medical-primary);
+  text-decoration: none;
+  font-weight: 600;
+  transition: all var(--transition-fast);
+}
+
+.activity-link:hover {
+  text-decoration: underline;
+  color: var(--medical-primary-dark);
+}
+
+.activity-badge {
+  background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+  color: var(--success-green-dark);
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  flex-shrink: 0;
+  border: 2px solid var(--success-green-light);
+  box-shadow: var(--shadow-sm);
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+
+@media (max-width: 1024px) {
+  .contracts-grid,
+  .verification-footer {
+    grid-template-columns: 1fr;
+    padding: 0 24px;
+  }
+
+  .steps-timeline {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .waitlist-section,
+  .blockchain-verification,
+  .how-it-works,
+  .recent-activity {
+    padding: 60px 0;
+  }
+
+  .waitlist-header h2,
+  .verification-header h2,
+  .how-header h2,
+  .activity-header h2 {
+    font-size: 2.2rem;
+  }
+
+  .waitlist-content {
+    padding: 24px;
+    border-radius: 16px;
+  }
+
+  .waitlist-table th,
+  .waitlist-table td {
+    padding: 16px 12px;
+    font-size: 0.85rem;
+  }
+
+  .steps-timeline {
+    grid-template-columns: 1fr;
+  }
+
+  .activity-item {
+    flex-direction: column;
+    text-align: center;
+    padding: 20px;
+  }
+
+  .activity-meta {
+    justify-content: center;
+  }
+
+  .waitlist-tabs {
+    gap: 12px;
+  }
+
+  .tab-button {
+    padding: 12px 20px;
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .waitlist-header h2,
+  .verification-header h2,
+  .how-header h2,
+  .activity-header h2 {
+    font-size: 1.8rem;
+  }
+
+  .waitlist-content {
+    padding: 20px;
+  }
+
+  .table-info {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .waitlist-table {
+    font-size: 0.8rem;
+  }
+
+  .waitlist-table th,
+  .waitlist-table td {
+    padding: 12px 8px;
+  }
+
+  .position-badge {
+    padding: 8px 14px;
+    font-size: 0.9rem;
+  }
+
+  .patient-hash {
+    font-size: 0.8rem;
+    padding: 4px 8px;
+  }
+
+  .blood-type {
+    padding: 6px 12px;
+    font-size: 0.85rem;
+  }
+
+  .urgency-badge {
+    padding: 8px 14px;
+    font-size: 0.75rem;
+  }
+
+  .contract-card,
+  .footer-card,
+  .step-card {
+    padding: 24px;
+  }
+}

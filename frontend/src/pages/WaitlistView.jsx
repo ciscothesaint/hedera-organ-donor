@@ -77,32 +77,43 @@ function WaitlistView() {
           </thead>
           <tbody>
             {waitlist.map((patient, index) => {
-              const daysWaiting = Math.floor(
-                (Date.now() - new Date(patient.waitlistInfo.registrationDate)) / (1000 * 60 * 60 * 24)
-              );
+              // Calculate days waiting from registeredAt field
+              let daysWaiting = 'N/A';
+              if (patient.registeredAt && patient.registeredAt !== 'N/A') {
+                try {
+                  const regDate = new Date(patient.registeredAt);
+                  if (!isNaN(regDate.getTime())) {
+                    daysWaiting = Math.floor((Date.now() - regDate.getTime()) / (1000 * 60 * 60 * 24));
+                  }
+                } catch (err) {
+                  console.warn('Error parsing date:', err);
+                }
+              }
 
               return (
-                <tr key={patient._id}>
+                <tr key={patient.patientHash || patient.patientId || index}>
                   <td><strong>#{index + 1}</strong></td>
-                  <td>{patient.patientId}</td>
+                  <td>{patient.patientId || 'N/A'}</td>
                   <td>
-                    {patient.personalInfo.firstName} {patient.personalInfo.lastName}
+                    {patient.firstName && patient.lastName
+                      ? `${patient.firstName} ${patient.lastName}`
+                      : 'N/A'}
                   </td>
-                  <td>{patient.medicalInfo.bloodType}</td>
+                  <td>{patient.bloodType || 'N/A'}</td>
                   <td>
                     <span
-                      className={`badge badge-${patient.medicalInfo.urgencyLevel >= 4 ? 'danger' : 'warning'}`}
+                      className={`badge badge-${patient.urgencyLevel >= 4 ? 'danger' : 'warning'}`}
                     >
-                      Level {patient.medicalInfo.urgencyLevel}
+                      {patient.urgency || `Level ${patient.urgencyLevel}`}
                     </span>
                   </td>
-                  <td>{patient.medicalInfo.medicalScore}</td>
-                  <td>{daysWaiting} days</td>
+                  <td>{patient.medicalScore || 'N/A'}</td>
+                  <td>{typeof daysWaiting === 'number' ? `${daysWaiting} days` : patient.waitTime || daysWaiting}</td>
                   <td>
-                    {patient.matching?.isMatched ? (
-                      <span className="badge badge-info">Matched</span>
+                    {patient.isVerified ? (
+                      <span className="badge badge-success">✅ Verified</span>
                     ) : (
-                      <span className="badge badge-success">Waiting</span>
+                      <span className="badge badge-warning">Waiting</span>
                     )}
                   </td>
                 </tr>

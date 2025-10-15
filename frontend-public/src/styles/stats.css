@@ -1,0 +1,543 @@
+/* ============================================
+   LIVE STATS SECTION - ENHANCED MEDICAL THEME
+   ============================================ */
+
+.live-stats {
+  padding: 80px 0;
+  position: relative;
+}
+
+/* Stats Header */
+.stats-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 60px;
+  animation: slideIn 0.8s ease-out;
+}
+
+.stats-header h2 {
+  font-size: 2.8rem;
+  font-weight: 900;
+  background: var(--gradient-medical);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 12px;
+  letter-spacing: -0.5px;
+}
+
+.stats-subtitle {
+  color: var(--text-secondary);
+  font-size: 1.05rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* Stats Grid - Enhanced Layout */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 30px;
+  margin-bottom: 40px;
+}
+
+/* ============================================
+   STAT CARDS - MEDICAL THEME
+   ============================================ */
+
+.stat-card {
+  background: var(--bg-card);
+  border-radius: 20px;
+  padding: 35px;
+  box-shadow: var(--shadow-lg);
+  transition: all var(--transition-normal);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  animation: slideIn 0.6s ease-out;
+  animation-fill-mode: backwards;
+  border: 1px solid var(--border-light);
+}
+
+/* Staggered animation delays */
+.stat-card:nth-child(1) {
+  animation-delay: 0.1s;
+}
+
+.stat-card:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.stat-card:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+.stat-card:nth-child(4) {
+  animation-delay: 0.4s;
+}
+
+/* Hover Effects */
+.stat-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: var(--shadow-2xl);
+  border-color: var(--medical-primary-light);
+}
+
+/* Medical Gradient Top Border */
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 5px;
+  background: var(--gradient-medical);
+  transition: height var(--transition-normal);
+}
+
+.stat-card:hover::before {
+  height: 8px;
+}
+
+/* Subtle Pattern Overlay */
+.stat-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 120px;
+  height: 120px;
+  background: radial-gradient(circle at center, rgba(14, 165, 233, 0.08) 0%, transparent 70%);
+  border-radius: 50%;
+  transform: translate(40px, -40px);
+  pointer-events: none;
+}
+
+/* ============================================
+   STAT ICONS - COLOR-CODED MEDICAL
+   ============================================ */
+
+.stat-icon {
+  font-size: 3.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 90px;
+  height: 90px;
+  border-radius: 20px;
+  position: relative;
+  transition: all var(--transition-normal);
+}
+
+.stat-card:hover .stat-icon {
+  transform: scale(1.1) rotate(-5deg);
+}
+
+/* Patients - Blue Medical Theme */
+.stat-icon.patients {
+  background: linear-gradient(135deg, #E0F2FE 0%, #BAE6FD 100%);
+  box-shadow: 0 8px 20px rgba(14, 165, 233, 0.25);
+  animation: pulse 3s ease-in-out infinite;
+}
+
+.stat-icon.patients::before {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, rgba(14, 165, 233, 0.3) 0%, transparent 70%);
+  border-radius: 20px;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+/* Active Waitlist - Orange Urgent Theme */
+.stat-icon.active {
+  background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+  box-shadow: 0 8px 20px rgba(245, 158, 11, 0.25);
+  animation: pulse 3s ease-in-out infinite 0.5s;
+}
+
+/* Organs - Red Emergency Theme */
+.stat-icon.organs {
+  background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+  box-shadow: 0 8px 20px rgba(220, 38, 38, 0.25);
+  animation: heartbeat 2s ease-in-out infinite;
+}
+
+/* Matches - Green Success Theme */
+.stat-icon.matches {
+  background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+  box-shadow: 0 8px 20px rgba(16, 185, 129, 0.25);
+  animation: pulse 3s ease-in-out infinite 1s;
+}
+
+/* ============================================
+   STAT CONTENT - ENHANCED TYPOGRAPHY
+   ============================================ */
+
+.stat-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.stat-value {
+  font-size: 3.5rem;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -2px;
+  position: relative;
+  display: inline-block;
+}
+
+/* Animated counter effect - will be applied via JS */
+.stat-value.counting {
+  animation: countUp 1s ease-out;
+}
+
+@keyframes countUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Color-coded values */
+.stat-card:nth-child(1) .stat-value {
+  background: linear-gradient(135deg, #0EA5E9 0%, #06B6D4 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.stat-card:nth-child(2) .stat-value {
+  background: linear-gradient(135deg, #F59E0B 0%, #FBBF24 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.stat-card:nth-child(3) .stat-value {
+  background: linear-gradient(135deg, #DC2626 0%, #EF4444 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.stat-card:nth-child(4) .stat-value {
+  background: linear-gradient(135deg, #10B981 0%, #34D399 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.stat-label {
+  font-size: 1.05rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+/* ============================================
+   STAT BADGES - ENHANCED DESIGN
+   ============================================ */
+
+.stat-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  transition: all var(--transition-normal);
+  border: 2px solid transparent;
+}
+
+/* Badge variants */
+.stat-card:nth-child(1) .stat-badge {
+  background: linear-gradient(135deg, #E0F2FE 0%, #BAE6FD 100%);
+  color: var(--medical-primary-dark);
+  border-color: var(--medical-primary-light);
+}
+
+.stat-card:nth-child(2) .stat-badge {
+  background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+  color: var(--urgent-orange-dark);
+  border-color: var(--urgent-orange-light);
+}
+
+/* Live indicator for active stats */
+.stat-card:nth-child(2) .stat-badge::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--urgent-orange);
+  animation: pulse 2s ease-in-out infinite;
+  box-shadow: 0 0 10px var(--urgent-orange);
+}
+
+.stat-card:nth-child(3) .stat-badge {
+  background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+  color: var(--emergency-red-dark);
+  border-color: var(--emergency-red-light);
+}
+
+.stat-card:nth-child(4) .stat-badge {
+  background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+  color: var(--success-green-dark);
+  border-color: var(--success-green-light);
+}
+
+.stat-card:hover .stat-badge {
+  transform: scale(1.05);
+}
+
+/* ============================================
+   STATS FOOTER - ENHANCED BADGES
+   ============================================ */
+
+.stats-footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 24px;
+  margin-top: 50px;
+  flex-wrap: wrap;
+  animation: slideIn 0.8s ease-out 0.5s backwards;
+}
+
+.footer-badge {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--bg-card);
+  padding: 16px 28px;
+  border-radius: 30px;
+  box-shadow: var(--shadow-md);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  border: 2px solid var(--border-light);
+  transition: all var(--transition-normal);
+  position: relative;
+  overflow: hidden;
+}
+
+.footer-badge::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(14, 165, 233, 0.1), transparent);
+  transition: left 0.5s;
+}
+
+.footer-badge:hover {
+  border-color: var(--medical-primary);
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-3px);
+}
+
+.footer-badge:hover::before {
+  left: 100%;
+}
+
+.badge-icon {
+  font-size: 1.5rem;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+/* ============================================
+   LOADING & ERROR STATES
+   ============================================ */
+
+.stats-loading,
+.stats-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 100px 20px;
+  gap: 24px;
+}
+
+.stats-loading .loading-spinner {
+  width: 60px;
+  height: 60px;
+  border-width: 5px;
+}
+
+.stats-error {
+  color: var(--emergency-red);
+}
+
+.stats-error p {
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* ============================================
+   CIRCULAR PROGRESS INDICATOR (Optional)
+   ============================================ */
+
+.stat-progress {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  width: 60px;
+  height: 60px;
+}
+
+.stat-progress circle {
+  fill: none;
+  stroke-width: 4;
+  stroke-linecap: round;
+  transform: rotate(-90deg);
+  transform-origin: center;
+  transition: stroke-dashoffset 1s ease;
+}
+
+.stat-progress .progress-bg {
+  stroke: var(--clinical-gray-200);
+}
+
+.stat-progress .progress-fill {
+  stroke: var(--medical-primary);
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+
+@media (max-width: 1024px) {
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .stat-value {
+    font-size: 3rem;
+  }
+
+  .stat-icon {
+    width: 80px;
+    height: 80px;
+    font-size: 3rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .live-stats {
+    padding: 60px 0;
+  }
+
+  .stats-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 40px;
+  }
+
+  .stats-header h2 {
+    font-size: 2.2rem;
+  }
+
+  .stats-subtitle {
+    font-size: 0.95rem;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .stat-card {
+    padding: 28px;
+  }
+
+  .stat-value {
+    font-size: 2.8rem;
+  }
+
+  .stat-label {
+    font-size: 0.95rem;
+  }
+
+  .stats-footer {
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 40px;
+  }
+
+  .footer-badge {
+    width: 100%;
+    justify-content: center;
+    padding: 14px 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  .live-stats {
+    padding: 50px 0;
+  }
+
+  .stats-header h2 {
+    font-size: 1.8rem;
+  }
+
+  .stats-subtitle {
+    font-size: 0.85rem;
+  }
+
+  .stat-card {
+    padding: 24px;
+    gap: 16px;
+  }
+
+  .stat-icon {
+    width: 70px;
+    height: 70px;
+    font-size: 2.5rem;
+  }
+
+  .stat-value {
+    font-size: 2.5rem;
+    letter-spacing: -1px;
+  }
+
+  .stat-label {
+    font-size: 0.9rem;
+  }
+
+  .stat-badge {
+    font-size: 0.7rem;
+    padding: 6px 12px;
+  }
+
+  .footer-badge {
+    font-size: 0.85rem;
+    padding: 12px 20px;
+  }
+
+  .badge-icon {
+    font-size: 1.3rem;
+  }
+}

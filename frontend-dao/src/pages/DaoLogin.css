@@ -1,0 +1,405 @@
+.dao-login-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--gradient-medical);
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Medical Pattern Background */
+.dao-login-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image:
+    repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 100px,
+      rgba(255, 255, 255, 0.03) 100px,
+      rgba(255, 255, 255, 0.03) 102px
+    ),
+    repeating-linear-gradient(
+      -45deg,
+      transparent,
+      transparent 100px,
+      rgba(255, 255, 255, 0.03) 100px,
+      rgba(255, 255, 255, 0.03) 102px
+    );
+  pointer-events: none;
+}
+
+/* Floating Medical Icons (decorative) */
+.dao-login-container::after {
+  content: '⚕️';
+  position: absolute;
+  font-size: 200px;
+  opacity: 0.05;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-15deg);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.dao-login-card {
+  background: var(--bg-card);
+  border-radius: 24px;
+  box-shadow: var(--shadow-2xl);
+  width: 100%;
+  max-width: 480px;
+  padding: 48px;
+  position: relative;
+  z-index: 1;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  animation: slideIn 0.5s ease-out;
+}
+
+/* Glass-morphism effect on hover */
+.dao-login-card:hover {
+  box-shadow: var(--shadow-2xl), 0 0 0 1px rgba(14, 165, 233, 0.2);
+  transform: translateY(-2px);
+  transition: all var(--transition-normal);
+}
+
+.dao-login-header {
+  text-align: center;
+  margin-bottom: 40px;
+  position: relative;
+}
+
+/* Medical Logo */
+.dao-login-header::before {
+  content: '⚕️';
+  display: block;
+  font-size: 64px;
+  margin-bottom: 16px;
+  filter: drop-shadow(0 4px 8px rgba(14, 165, 233, 0.3));
+  animation: pulse 3s ease-in-out infinite;
+}
+
+.dao-login-header h1 {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+  letter-spacing: -0.5px;
+  background: var(--gradient-medical);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.dao-login-header p {
+  color: var(--text-secondary);
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.dao-login-form {
+  margin-bottom: 32px;
+}
+
+/* Enhanced Form Groups */
+.dao-login-form .form-group {
+  position: relative;
+  margin-bottom: 24px;
+}
+
+.dao-login-form .label {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dao-login-form .label::before {
+  content: '';
+  width: 4px;
+  height: 16px;
+  background: var(--gradient-medical);
+  border-radius: 2px;
+}
+
+/* Input with icon space */
+.dao-login-form .input {
+  padding-left: 44px;
+  font-size: 15px;
+  height: 48px;
+}
+
+.dao-login-form .form-group::before {
+  content: '📧';
+  position: absolute;
+  left: 16px;
+  bottom: 14px;
+  font-size: 18px;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.dao-login-form .form-group:nth-child(2)::before {
+  content: '🔒';
+}
+
+/* Submit Button Enhanced */
+.dao-login-form .btn-block {
+  height: 52px;
+  font-size: 16px;
+  font-weight: 700;
+  margin-top: 32px;
+  position: relative;
+  overflow: hidden;
+}
+
+.dao-login-form .btn-block::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.dao-login-form .btn-block:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+/* Footer Section */
+.dao-login-footer {
+  text-align: center;
+  padding-top: 24px;
+  border-top: 2px solid var(--border-light);
+}
+
+.dao-login-footer p {
+  margin-bottom: 16px;
+  font-size: 14px;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.dao-login-footer a {
+  color: var(--medical-primary);
+  text-decoration: none;
+  font-weight: 700;
+  transition: all var(--transition-normal);
+  position: relative;
+}
+
+.dao-login-footer a::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--gradient-medical);
+  transition: width var(--transition-normal);
+}
+
+.dao-login-footer a:hover::after {
+  width: 100%;
+}
+
+.dao-login-footer a:hover {
+  color: var(--medical-primary-dark);
+}
+
+/* Divider with gradient */
+.divider {
+  margin: 24px 0;
+  position: relative;
+  text-align: center;
+}
+
+.divider::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--border-medium), transparent);
+}
+
+.divider span {
+  position: relative;
+  background: var(--bg-card);
+  padding: 0 16px;
+  color: var(--text-tertiary);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Admin Link */
+.admin-link {
+  margin-top: 20px;
+}
+
+.admin-link a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-secondary);
+  font-size: 14px;
+  font-weight: 600;
+  transition: all var(--transition-normal);
+}
+
+.admin-link a::after {
+  content: '→';
+  transition: transform var(--transition-normal);
+}
+
+.admin-link a:hover {
+  color: var(--medical-primary);
+}
+
+.admin-link a:hover::after {
+  transform: translateX(4px);
+}
+
+/* Powered By Section */
+.powered-by {
+  margin-top: 32px;
+  padding-top: 20px;
+  border-top: 2px solid var(--border-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.powered-by::before {
+  content: '⚡';
+  font-size: 16px;
+}
+
+.powered-by small {
+  color: var(--text-tertiary);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* Alert in login form */
+.dao-login-form .alert {
+  margin-bottom: 24px;
+  animation: slideIn 0.3s ease-out;
+}
+
+/* Loading State */
+.dao-login-form .btn-block:disabled {
+  position: relative;
+}
+
+.dao-login-form .btn-block:disabled::after {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* Security Badge */
+.security-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 24px;
+  padding: 12px;
+  background: linear-gradient(135deg, var(--clinical-gray-50) 0%, var(--clinical-gray-100) 100%);
+  border-radius: 10px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.security-badge::before {
+  content: '🔐';
+  font-size: 16px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .dao-login-card {
+    padding: 40px 32px;
+    border-radius: 20px;
+  }
+
+  .dao-login-header h1 {
+    font-size: 28px;
+  }
+
+  .dao-login-header::before {
+    font-size: 56px;
+  }
+}
+
+@media (max-width: 480px) {
+  .dao-login-container {
+    padding: 16px;
+  }
+
+  .dao-login-card {
+    padding: 32px 24px;
+    border-radius: 16px;
+  }
+
+  .dao-login-header h1 {
+    font-size: 24px;
+  }
+
+  .dao-login-header::before {
+    font-size: 48px;
+    margin-bottom: 12px;
+  }
+
+  .dao-login-header p {
+    font-size: 14px;
+  }
+
+  .dao-login-form .btn-block {
+    height: 48px;
+    font-size: 15px;
+  }
+}
+
+/* Floating Animation for Background */
+@keyframes float {
+  0%, 100% {
+    transform: translate(-50%, -50%) rotate(-15deg) translateY(0);
+  }
+  50% {
+    transform: translate(-50%, -50%) rotate(-15deg) translateY(-20px);
+  }
+}
+
+.dao-login-container::after {
+  animation: float 6s ease-in-out infinite;
+}

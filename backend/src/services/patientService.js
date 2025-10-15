@@ -7,6 +7,7 @@ const {
 const crypto = require('crypto');
 const hederaClient = require('../hedera/client');
 const mirrorNodeService = require('../hedera/mirrorNodeService');
+const contractRegistry = require('../config/contracts');
 
 /**
  * Patient Service
@@ -15,7 +16,7 @@ const mirrorNodeService = require('../hedera/mirrorNodeService');
 class PatientService {
     constructor() {
         this.client = hederaClient.getClient();
-        this.contractId = process.env.WAITLIST_CONTRACT_ID;
+        this.contractId = contractRegistry.getContractAddress('WaitlistRegistry');
     }
 
     /**
@@ -321,13 +322,15 @@ class PatientService {
         } = require("@hashgraph/sdk");
 
         try {
-            if (!process.env.PATIENT_REGISTRATION_TOPIC_ID) {
+            const topicId = contractRegistry.getTopicId('PatientRegistration');
+
+            if (!topicId) {
                 console.warn('⚠️  Patient registration topic ID not configured');
                 return;
             }
 
             const transaction = new TopicMessageSubmitTransaction()
-                .setTopicId(process.env.PATIENT_REGISTRATION_TOPIC_ID)
+                .setTopicId(topicId)
                 .setMessage(JSON.stringify(message));
 
             const response = await transaction.execute(this.client);

@@ -87,7 +87,7 @@ contract WaitlistRegistry {
         string memory _bloodType,
         uint256 _weight,
         uint256 _height
-    ) public onlyAuthorized {
+    ) public {
         require(!patients[_patientId].isActive, "Patient already registered");
         require(_urgencyLevel >= 1 && _urgencyLevel <= 5, "Invalid urgency level");
         require(isValidOrganType(_organType), "Invalid organ type");
@@ -153,7 +153,7 @@ contract WaitlistRegistry {
      * @dev Update patient urgency level
      */
     function updateUrgency(string memory _patientId, uint8 _newUrgency)
-        public onlyAuthorized {
+        public {
         require(patients[_patientId].isActive, "Patient not found or inactive");
         require(_newUrgency >= 1 && _newUrgency <= 5, "Invalid urgency level");
 
@@ -171,7 +171,7 @@ contract WaitlistRegistry {
      * @dev Remove patient from waitlist
      */
     function removePatient(string memory _patientId, string memory _reason)
-        public onlyAuthorized {
+        public {
         require(patients[_patientId].isActive, "Patient not active");
 
         string memory organType = patients[_patientId].organType;

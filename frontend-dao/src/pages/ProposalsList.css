@@ -1,0 +1,557 @@
+.proposals-list-page {
+  max-width: 1400px;
+  margin: 0 auto;
+  animation: slideIn 0.5s ease-out;
+}
+
+/* ============================================
+   PAGE HEADER
+   ============================================ */
+
+.page-header {
+  margin-bottom: 40px;
+  padding: 32px;
+  background: linear-gradient(135deg, var(--bg-card) 0%, var(--clinical-gray-50) 100%);
+  border-radius: 20px;
+  border-left: 6px solid var(--medical-primary);
+  box-shadow: var(--shadow-md);
+}
+
+.page-header h1 {
+  font-size: 36px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.page-header p {
+  color: var(--text-secondary);
+  font-size: 16px;
+  font-weight: 500;
+}
+
+/* ============================================
+   FILTERS SECTION - Pill Style
+   ============================================ */
+
+.filters-section {
+  margin-bottom: 40px;
+  background: var(--bg-card);
+  padding: 28px;
+  border-radius: 16px;
+  box-shadow: var(--shadow-md);
+}
+
+.filters-section h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.filters-section h3::before {
+  content: '🔍';
+  font-size: 20px;
+}
+
+.filters-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 24px;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.filter-group label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.filter-group select {
+  padding: 12px 16px;
+  border: 2px solid var(--border-light);
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  background: var(--bg-card);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+}
+
+.filter-group select:hover {
+  border-color: var(--border-medium);
+}
+
+.filter-group select:focus {
+  outline: none;
+  border-color: var(--medical-primary);
+  box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+}
+
+/* Pill Filter Buttons (Alternative Style) */
+.filter-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.filter-pill {
+  padding: 10px 20px;
+  border-radius: 24px;
+  border: 2px solid var(--border-medium);
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+}
+
+.filter-pill:hover {
+  border-color: var(--medical-primary);
+  background: var(--clinical-gray-50);
+  color: var(--medical-primary);
+}
+
+.filter-pill.active {
+  border-color: var(--medical-primary);
+  background: var(--gradient-medical);
+  color: white;
+  box-shadow: var(--shadow-md);
+}
+
+/* ============================================
+   PROPOSALS GRID
+   ============================================ */
+
+.proposals-grid {
+  display: grid;
+  gap: 24px;
+  margin-bottom: 40px;
+}
+
+.proposal-item {
+  background: var(--bg-card);
+  border-radius: 16px;
+  padding: 28px;
+  box-shadow: var(--shadow-md);
+  transition: all var(--transition-normal);
+  border-left: 5px solid var(--border-light);
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.proposal-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle, var(--clinical-gray-50) 0%, transparent 70%);
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.proposal-item:hover {
+  transform: translateX(6px);
+  box-shadow: var(--shadow-xl);
+  border-left-color: var(--medical-primary);
+}
+
+.proposal-item.emergency {
+  border-left-color: var(--emergency-red);
+  background: linear-gradient(135deg, var(--bg-card) 0%, #FEF2F2 100%);
+}
+
+.proposal-item.emergency:hover {
+  border-left-color: var(--emergency-red);
+  box-shadow: var(--shadow-xl), 0 0 0 1px rgba(220, 38, 38, 0.1);
+}
+
+.proposal-item.emergency::after {
+  content: '⚠️';
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  font-size: 32px;
+  opacity: 0.15;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+/* ============================================
+   PROPOSAL ITEM CONTENT
+   ============================================ */
+
+.proposal-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+  position: relative;
+  z-index: 1;
+}
+
+.badges {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.proposal-number {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-tertiary);
+  background: var(--clinical-gray-100);
+  padding: 6px 14px;
+  border-radius: 10px;
+  font-family: monospace;
+}
+
+.proposal-item-body {
+  position: relative;
+  z-index: 1;
+}
+
+.proposal-item-body h3 {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  color: var(--text-primary);
+  line-height: 1.4;
+}
+
+/* Patient Info Badge */
+.patient-info {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+  padding: 10px 16px;
+  background: linear-gradient(135deg, var(--clinical-gray-50) 0%, var(--clinical-gray-100) 100%);
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  border: 1px solid var(--border-light);
+}
+
+.patient-info::before {
+  content: '👤';
+  font-size: 16px;
+}
+
+.patient-info code {
+  font-family: monospace;
+  color: var(--medical-primary);
+  font-weight: 700;
+  background: var(--bg-card);
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+
+.label-sm {
+  font-weight: 700;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+}
+
+/* Urgency Change Indicator */
+.urgency-change {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+  padding: 16px;
+  background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+  border-radius: 12px;
+  border: 2px solid var(--urgent-orange);
+}
+
+.urgency-change .old-value {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--text-secondary);
+}
+
+.urgency-change .arrow {
+  color: var(--urgent-orange);
+  font-size: 24px;
+  font-weight: 900;
+}
+
+.urgency-change .new-value {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--emergency-red);
+}
+
+/* Proposal Reasoning */
+.proposal-reasoning {
+  color: var(--text-primary);
+  line-height: 1.7;
+  margin-bottom: 20px;
+  font-size: 15px;
+}
+
+/* Proposal Meta Information */
+.proposal-item-meta {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid var(--border-light);
+  font-weight: 600;
+}
+
+.proposal-item-meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ============================================
+   VOTE PROGRESS SECTION
+   ============================================ */
+
+.vote-progress-section {
+  margin-bottom: 20px;
+}
+
+.vote-bar {
+  height: 12px;
+  background: var(--clinical-gray-200);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 12px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.06);
+  position: relative;
+}
+
+.vote-fill {
+  height: 100%;
+  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.vote-fill.approve {
+  background: var(--gradient-success);
+}
+
+.vote-fill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  animation: shimmer 2s infinite;
+}
+
+.vote-counts {
+  display: flex;
+  gap: 20px;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.vote-counts .approve {
+  color: var(--success-green);
+}
+
+.vote-counts .reject {
+  color: var(--emergency-red);
+}
+
+.vote-counts .abstain {
+  color: var(--text-tertiary);
+}
+
+/* ============================================
+   PROPOSAL FOOTER
+   ============================================ */
+
+.proposal-item-footer {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 2px solid var(--border-light);
+  position: relative;
+  z-index: 1;
+}
+
+/* ============================================
+   PAGINATION
+   ============================================ */
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  padding: 32px 0;
+}
+
+.pagination button {
+  min-width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  font-weight: 700;
+}
+
+.page-info {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  padding: 0 12px;
+}
+
+/* Empty State */
+.empty-proposals {
+  background: var(--bg-card);
+  border-radius: 20px;
+  padding: 80px 40px;
+  text-align: center;
+  box-shadow: var(--shadow-md);
+  border: 2px dashed var(--border-medium);
+}
+
+.empty-proposals::before {
+  content: '📋';
+  display: block;
+  font-size: 72px;
+  margin-bottom: 24px;
+  opacity: 0.5;
+}
+
+.empty-proposals h3 {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 12px;
+}
+
+.empty-proposals p {
+  color: var(--text-secondary);
+  font-size: 16px;
+  font-weight: 500;
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+
+@media (max-width: 1024px) {
+  .filters-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .page-header {
+    padding: 24px;
+  }
+
+  .page-header h1 {
+    font-size: 28px;
+  }
+
+  .filters-section {
+    padding: 20px;
+  }
+
+  .filters-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .proposal-item {
+    padding: 20px;
+  }
+
+  .proposal-item-body h3 {
+    font-size: 18px;
+  }
+
+  .proposal-item-meta {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .vote-counts {
+    font-size: 13px;
+    gap: 12px;
+  }
+
+  .urgency-change {
+    gap: 12px;
+    padding: 12px;
+  }
+
+  .urgency-change .old-value,
+  .urgency-change .new-value {
+    font-size: 18px;
+  }
+
+  .urgency-change .arrow {
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .page-header h1 {
+    font-size: 24px;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .proposal-item {
+    padding: 16px;
+  }
+
+  .badges {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .patient-info {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .vote-counts {
+    flex-wrap: wrap;
+  }
+
+  .pagination {
+    gap: 8px;
+  }
+
+  .pagination button {
+    min-width: 40px;
+    height: 40px;
+    font-size: 13px;
+  }
+}

@@ -1,7 +1,7 @@
 const express = require('express');
 const Organ = require('../db/models/Organ');
 const Patient = require('../db/models/Patient');
-const { createHederaClient } = require('../hedera/hederaClient');
+const hederaClient = require('../hedera/client');
 const { registerOrgan: registerOrganOnChain, allocateOrgan } = require('../hedera/contractService');
 const { logOrganMatch } = require('../hedera/topicService');
 const { authenticate, authorize } = require('../middleware/auth');
@@ -14,8 +14,6 @@ const router = express.Router();
  * POST /api/organs
  */
 router.post('/', authenticate, authorize('canRegisterOrgans'), validateOrganRegistration, async (req, res) => {
-    let client;
-
     try {
         const organ = new Organ(req.body);
 
@@ -26,7 +24,7 @@ router.post('/', authenticate, authorize('canRegisterOrgans'), validateOrganRegi
         );
 
         // Register on blockchain
-        client = createHederaClient();
+        const client = hederaClient.getClient();
         const contractId = process.env.MATCHING_CONTRACT_ID;
 
         const result = await registerOrganOnChain(client, contractId, {
@@ -54,8 +52,6 @@ router.post('/', authenticate, authorize('canRegisterOrgans'), validateOrganRegi
         });
     } catch (error) {
         res.status(500).json({ error: error.message });
-    } finally {
-        if (client) await client.close();
     }
 });
 
@@ -186,8 +182,6 @@ router.post('/:organId/find-match', authenticate, authorize('canAllocateOrgans')
  * POST /api/organs/allocate
  */
 router.post('/allocate', authenticate, authorize('canAllocateOrgans'), validateOrganAllocation, async (req, res) => {
-    let client;
-
     try {
         const { organId, patientId } = req.body;
 
@@ -203,7 +197,7 @@ router.post('/allocate', authenticate, authorize('canAllocateOrgans'), validateO
         }
 
         // Allocate on blockchain
-        client = createHederaClient();
+        const client = hederaClient.getClient();
         const contractId = process.env.MATCHING_CONTRACT_ID;
 
         const result = await allocateOrgan(client, contractId, organId, patientId);
@@ -240,8 +234,6 @@ router.post('/allocate', authenticate, authorize('canAllocateOrgans'), validateO
         });
     } catch (error) {
         res.status(500).json({ error: error.message });
-    } finally {
-        if (client) await client.close();
     }
 });
 

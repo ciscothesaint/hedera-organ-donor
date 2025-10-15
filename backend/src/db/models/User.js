@@ -21,13 +21,13 @@ const userSchema = new mongoose.Schema({
     },
     role: {
         type: String,
-        enum: ['ADMIN', 'HOSPITAL_ADMIN', 'DOCTOR', 'COORDINATOR', 'VIEWER'],
+        enum: ['ADMIN', 'HOSPITAL_ADMIN', 'DOCTOR', 'COORDINATOR', 'VIEWER', 'DAO_DOCTOR', 'DAO_ETHICS', 'DAO_OBSERVER'],
         required: true,
     },
     hospitalId: {
         type: String,
         required: function() {
-            return this.role !== 'ADMIN';
+            return this.role !== 'ADMIN' && !this.role.startsWith('DAO_');
         },
     },
     profile: {
@@ -35,6 +35,47 @@ const userSchema = new mongoose.Schema({
         lastName: String,
         licenseNumber: String,
         specialization: String,
+    },
+    // DAO-specific profile
+    daoProfile: {
+        medicalLicenseNumber: {
+            type: String,
+        },
+        licenseState: {
+            type: String,
+        },
+        specialization: {
+            type: String,
+        },
+        yearsOfExperience: {
+            type: Number,
+        },
+        votingPower: {
+            type: Number,
+            default: 1,
+            min: 1,
+            max: 10,
+        },
+        isAuthorizedVoter: {
+            type: Boolean,
+            default: false,
+        },
+        authorizedAt: {
+            type: Date,
+        },
+        totalProposalsCreated: {
+            type: Number,
+            default: 0,
+        },
+        totalVotesCast: {
+            type: Number,
+            default: 0,
+        },
+        verificationDocuments: [{
+            documentType: String,
+            documentHash: String,
+            uploadedAt: Date,
+        }],
     },
     permissions: {
         canRegisterPatients: {
@@ -125,6 +166,33 @@ userSchema.methods.setRolePermissions = function() {
             };
             break;
         case 'VIEWER':
+            this.permissions = {
+                canRegisterPatients: false,
+                canRegisterOrgans: false,
+                canUpdateUrgency: false,
+                canAllocateOrgans: false,
+                canViewAuditLogs: true,
+            };
+            break;
+        case 'DAO_DOCTOR':
+            this.permissions = {
+                canRegisterPatients: false,
+                canRegisterOrgans: false,
+                canUpdateUrgency: false,  // Can propose, not directly update
+                canAllocateOrgans: false,
+                canViewAuditLogs: true,
+            };
+            break;
+        case 'DAO_ETHICS':
+            this.permissions = {
+                canRegisterPatients: false,
+                canRegisterOrgans: false,
+                canUpdateUrgency: false,
+                canAllocateOrgans: false,
+                canViewAuditLogs: true,
+            };
+            break;
+        case 'DAO_OBSERVER':
             this.permissions = {
                 canRegisterPatients: false,
                 canRegisterOrgans: false,

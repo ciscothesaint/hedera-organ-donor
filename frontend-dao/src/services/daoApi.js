@@ -80,7 +80,7 @@ export const daoProposalAPI = {
 
   finalize: (proposalId) => daoClient.post(`/api/dao/proposals/${proposalId}/finalize`),
 
-  emergencyFinalize: (proposalId) => daoClient.post(`/api/dao/proposals/${proposalId}/emergency-finalize`),
+  emergencyFinalize: (proposalId, password) => daoClient.post(`/api/dao/proposals/${proposalId}/emergency-finalize`, { password }),
 
   execute: (proposalId) => daoClient.post(`/api/dao/proposals/${proposalId}/execute`),
 

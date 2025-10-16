@@ -15,6 +15,7 @@ const daoRoleRoutes = require('./api/daoRoleRoutes');
 
 // Admin DAO Management Routes
 const adminDaoRoutes = require('./api/adminDaoRoutes');
+const systemSettingsRoutes = require('./api/systemSettingsRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -45,6 +46,7 @@ app.use('/api/patients', patientRoutes);
 app.use('/api/organs', organRoutes);
 app.use('/api/mirror', mirrorRoutes); // FREE queries - no gas fees!
 app.use('/api/admin', adminDaoRoutes); // Admin DAO user management
+app.use('/api/settings', systemSettingsRoutes); // System settings (admin only)
 
 // DAO Platform API Routes (Separate authentication)
 app.use('/api/dao/auth', daoAuthRoutes);

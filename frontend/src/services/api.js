@@ -109,4 +109,10 @@ export const daoAdminAPI = {
   updateVotingPower: (userId, votingPower) => api.patch(`/admin/dao-users/${userId}/voting-power`, { votingPower }),
 };
 
+// System Settings API (Admin only)
+export const systemSettingsAPI = {
+  setEmergencyPassword: (password, confirmPassword) => api.post('/settings/emergency-password', { password, confirmPassword }),
+  getPasswordStatus: () => api.get('/settings/emergency-password/status'),
+};
+
 export default api;

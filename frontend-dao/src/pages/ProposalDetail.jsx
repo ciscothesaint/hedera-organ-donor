@@ -20,6 +20,7 @@ function ProposalDetail() {
     const refreshIntervalRef = useRef(null);
     const [showConfirmModal, setShowConfirmModal] = useState(false);
     const [isFinalizingLoading, setIsFinalizingLoading] = useState(false);
+    const [emergencyPassword, setEmergencyPassword] = useState('');
 
     // Fetch proposal details on mount and when proposalId changes
     useEffect(() => {
@@ -90,11 +91,16 @@ function ProposalDetail() {
     };
 
     const confirmEmergencyFinalize = async () => {
+        if (!emergencyPassword) {
+            toast.error('Please enter the emergency finalize password');
+            return;
+        }
+
         try {
             setIsFinalizingLoading(true);
             setShowConfirmModal(false);
 
-            const finalizePromise = daoProposalAPI.emergencyFinalize(proposalId);
+            const finalizePromise = daoProposalAPI.emergencyFinalize(proposalId, emergencyPassword);
 
             toast.promise(
                 finalizePromise,
@@ -119,7 +125,8 @@ function ProposalDetail() {
 
             await finalizePromise;
 
-            // Refresh proposal details
+            // Clear password and refresh
+            setEmergencyPassword('');
             await fetchProposalDetails();
         } catch (err) {
             console.error('Error emergency finalizing:', err);
@@ -564,7 +571,10 @@ function ProposalDetail() {
             {proposal && (
                 <ConfirmModal
                     isOpen={showConfirmModal}
-                    onClose={() => setShowConfirmModal(false)}
+                    onClose={() => {
+                        setShowConfirmModal(false);
+                        setEmergencyPassword('');
+                    }}
                     onConfirm={confirmEmergencyFinalize}
                     title="Emergency Finalize Proposal?"
                     message="This action will immediately finalize the proposal based on current votes. This cannot be undone."
@@ -580,6 +590,26 @@ function ProposalDetail() {
                             label: 'Approval Rate',
                             value: `${((proposal.votesFor / (proposal.votesFor + proposal.votesAgainst)) * 100 || 0).toFixed(2)}%`,
                             variant: ((proposal.votesFor / (proposal.votesFor + proposal.votesAgainst)) * 100 >= 75) ? 'success' : 'danger'
+                        },
+                        {
+                            label: 'Emergency Password',
+                            value: (
+                                <input
+                                    type="password"
+                                    value={emergencyPassword}
+                                    onChange={(e) => setEmergencyPassword(e.target.value)}
+                                    placeholder="Enter emergency finalize password"
+                                    style={{
+                                        width: '100%',
+                                        padding: '10px',
+                                        border: '1px solid #ddd',
+                                        borderRadius: '6px',
+                                        fontSize: '14px',
+                                        marginTop: '5px'
+                                    }}
+                                    autoFocus
+                                />
+                            )
                         }
                     ]}
                     loading={isFinalizingLoading}

@@ -1,20 +1,21 @@
 .dao-users-container {
   padding: 2rem;
-  max-width: 1400px;
+  max-width: 1600px;
   margin: 0 auto;
 }
 
 .dao-users-container h1 {
-  color: #2c3e50;
+  color: var(--text-primary);
   margin-bottom: 2rem;
   font-size: 2rem;
+  font-weight: 700;
 }
 
 .loading {
   text-align: center;
   padding: 3rem;
   font-size: 1.2rem;
-  color: #7f8c8d;
+  color: var(--text-tertiary);
 }
 
 .error-banner {
@@ -22,161 +23,483 @@
   border: 1px solid #fcc;
   color: #c33;
   padding: 1rem;
-  border-radius: 4px;
+  border-radius: 8px;
   margin-bottom: 2rem;
 }
+
+/* ============================================
+   SECTIONS
+   ============================================ */
 
 .dao-users-section {
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  padding: 1.5rem;
-  margin-bottom: 2rem;
-}
-
-.dao-users-section h2 {
-  color: #34495e;
-  margin-bottom: 1.5rem;
-  font-size: 1.5rem;
-  border-bottom: 2px solid #3498db;
-  padding-bottom: 0.5rem;
-}
-
-.no-users {
-  text-align: center;
+  background: var(--bg-card);
+  border-radius: 12px;
+  box-shadow: var(--shadow-md);
   padding: 2rem;
-  color: #95a5a6;
+  margin-bottom: 2rem;
+  border: 1px solid var(--border-light);
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid var(--border-light);
+}
+
+.section-header h2 {
+  color: var(--text-primary);
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.count-badge {
+  background: var(--clinical-gray-100);
+  color: var(--text-secondary);
+  padding: 0.35rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  min-width: 32px;
+  text-align: center;
+}
+
+.count-badge.success {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(5, 150, 105, 0.15) 100%);
+  color: #059669;
+  border: 1px solid #10b981;
+}
+
+/* ============================================
+   EMERGENCY PASSWORD SECTION
+   ============================================ */
+
+.emergency-password-section {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+}
+
+.emergency-password-section h2 {
+  color: white;
+  border-bottom-color: rgba(255, 255, 255, 0.3);
+}
+
+.password-status-card {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.password-status-info {
+  flex: 1;
+}
+
+.password-status-label {
+  font-size: 0.9rem;
+  opacity: 0.9;
+  margin-bottom: 0.5rem;
+}
+
+.password-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.password-status-badge svg {
+  flex-shrink: 0;
+}
+
+.password-status-badge.set {
+  background: rgba(52, 211, 153, 0.2);
+  color: #34d399;
+  border: 1px solid #34d399;
+}
+
+.password-status-badge.not-set {
+  background: rgba(251, 191, 36, 0.2);
+  color: #fbbf24;
+  border: 1px solid #fbbf24;
+}
+
+.password-set-date {
+  font-size: 0.85rem;
+  opacity: 0.8;
   font-style: italic;
 }
 
-.users-table-wrapper {
-  overflow-x: auto;
-}
-
-.users-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.9rem;
-}
-
-.users-table thead {
-  background-color: #f8f9fa;
-}
-
-.users-table th {
-  padding: 1rem;
-  text-align: left;
+.password-status-card .btn-primary {
+  background: white;
+  color: #667eea;
+  padding: 0.75rem 1.5rem;
   font-weight: 600;
-  color: #2c3e50;
-  border-bottom: 2px solid #dee2e6;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
   white-space: nowrap;
 }
 
-.users-table td {
-  padding: 1rem;
-  border-bottom: 1px solid #dee2e6;
-  vertical-align: middle;
+.password-status-card .btn-primary:hover {
+  background: rgba(255, 255, 255, 0.9);
+  color: #5568d3;
 }
 
-.users-table tbody tr:hover {
-  background-color: #f8f9fa;
+.password-hint {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.9rem;
+  line-height: 1.6;
+  margin: 0;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  border-left: 4px solid rgba(255, 255, 255, 0.3);
 }
+
+/* ============================================
+   NO USERS CARD
+   ============================================ */
+
+.no-users-card {
+  text-align: center;
+  padding: 3rem 2rem;
+  color: var(--text-tertiary);
+}
+
+.no-users-card svg {
+  color: var(--clinical-gray-300);
+  margin-bottom: 1rem;
+}
+
+.no-users-card p {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin: 0.5rem 0;
+}
+
+.no-users-card small {
+  color: var(--text-tertiary);
+  font-size: 0.9rem;
+}
+
+/* ============================================
+   USERS GRID
+   ============================================ */
+
+.users-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  gap: 1.5rem;
+}
+
+/* ============================================
+   USER CARDS
+   ============================================ */
+
+.user-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all var(--transition-normal);
+  box-shadow: var(--shadow-sm);
+}
+
+.user-card:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-4px);
+  border-color: var(--medical-primary);
+}
+
+.user-card.pending {
+  border-left: 4px solid #f59e0b;
+}
+
+.user-card.authorized {
+  border-left: 4px solid #10b981;
+}
+
+/* ============================================
+   USER CARD HEADER
+   ============================================ */
+
+.user-card-header {
+  padding: 1.5rem;
+  background: linear-gradient(135deg, rgba(14, 165, 233, 0.05) 0%, rgba(6, 182, 212, 0.05) 100%);
+  border-bottom: 1px solid var(--border-light);
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  position: relative;
+}
+
+.user-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: 700;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+}
+
+.user-avatar.authorized {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.user-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.user-info h3 {
+  margin: 0 0 0.25rem 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.user-email {
+  margin: 0 0 0.5rem 0;
+  font-size: 0.85rem;
+  color: var(--text-tertiary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.voting-power-badge {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  color: white;
+  padding: 0.4rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+}
+
+.voting-power-badge svg {
+  flex-shrink: 0;
+}
+
+/* ============================================
+   ROLE BADGES
+   ============================================ */
 
 .role-badge {
-  display: inline-block;
-  padding: 0.25rem 0.75rem;
-  border-radius: 12px;
-  font-size: 0.85rem;
-  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  padding: 0.35rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
   text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .role-badge.dao_doctor {
-  background-color: #e3f2fd;
-  color: #1565c0;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(37, 99, 235, 0.15) 100%);
+  color: #2563eb;
+  border: 1px solid #3b82f6;
 }
 
 .role-badge.dao_ethics {
-  background-color: #f3e5f5;
-  color: #6a1b9a;
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(124, 58, 237, 0.15) 100%);
+  color: #7c3aed;
+  border: 1px solid #8b5cf6;
 }
 
 .role-badge.dao_observer {
-  background-color: #fff3e0;
-  color: #e65100;
+  background: linear-gradient(135deg, rgba(107, 114, 128, 0.15) 0%, rgba(75, 85, 99, 0.15) 100%);
+  color: #4b5563;
+  border: 1px solid #6b7280;
+}
+
+/* ============================================
+   USER CARD BODY
+   ============================================ */
+
+.user-card-body {
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.info-row {
+  display: grid;
+  grid-template-columns: 24px auto 1fr;
+  gap: 0.5rem;
+  align-items: center;
+  font-size: 0.9rem;
+}
+
+.info-row svg {
+  color: var(--medical-primary);
+  flex-shrink: 0;
+}
+
+.info-label {
+  color: var(--text-tertiary);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.info-value {
+  color: var(--text-primary);
+  font-weight: 600;
+  text-align: right;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ============================================
+   USER CARD FOOTER
+   ============================================ */
+
+.user-card-footer {
+  padding: 1rem 1.5rem;
+  background: var(--clinical-gray-50);
+  border-top: 1px solid var(--border-light);
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.voting-power-control {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+.voting-power-control label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  white-space: nowrap;
 }
 
 .voting-power-input {
   width: 60px;
   padding: 0.5rem;
-  border: 1px solid #ced4da;
-  border-radius: 4px;
-  text-align: center;
+  border: 1px solid var(--border-light);
+  border-radius: 6px;
   font-size: 0.9rem;
+  font-weight: 600;
+  text-align: center;
+  transition: all var(--transition-normal);
 }
 
 .voting-power-input:focus {
   outline: none;
-  border-color: #3498db;
-  box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+  border-color: var(--medical-primary);
+  box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
 }
+
+/* ============================================
+   BUTTONS
+   ============================================ */
 
 .btn {
-  padding: 0.5rem 1rem;
+  padding: 0.65rem 1.25rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
   border: none;
-  border-radius: 4px;
   cursor: pointer;
-  font-size: 0.85rem;
-  font-weight: 500;
-  transition: all 0.2s;
-  margin-right: 0.5rem;
+  transition: all var(--transition-normal);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  white-space: nowrap;
 }
 
-.btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+.btn svg {
+  flex-shrink: 0;
 }
 
-.btn:active {
-  transform: translateY(0);
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .btn-approve {
-  background-color: #27ae60;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   color: white;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+  flex: 1;
 }
 
-.btn-approve:hover {
-  background-color: #229954;
+.btn-approve:hover:not(:disabled) {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+  transform: translateY(-2px);
 }
 
 .btn-update {
-  background-color: #3498db;
+  background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
   color: white;
+  box-shadow: 0 2px 8px rgba(14, 165, 233, 0.3);
 }
 
-.btn-update:hover {
-  background-color: #2980b9;
+.btn-update:hover:not(:disabled) {
+  background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+  box-shadow: 0 4px 12px rgba(14, 165, 233, 0.4);
+  transform: translateY(-2px);
 }
 
 .btn-revoke {
-  background-color: #e74c3c;
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
   color: white;
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
 }
 
-.btn-revoke:hover {
-  background-color: #c0392b;
+.btn-revoke:hover:not(:disabled) {
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+  transform: translateY(-2px);
 }
 
-/* Responsive design */
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+
 @media (max-width: 1200px) {
-  .users-table {
-    font-size: 0.85rem;
-  }
-
-  .users-table th,
-  .users-table td {
-    padding: 0.75rem;
+  .users-grid {
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
   }
 }
 
@@ -189,22 +512,52 @@
     font-size: 1.5rem;
   }
 
-  .dao-users-section h2 {
-    font-size: 1.2rem;
+  .dao-users-section {
+    padding: 1.25rem;
   }
 
-  .users-table {
-    font-size: 0.8rem;
+  .users-grid {
+    grid-template-columns: 1fr;
   }
 
-  .users-table th,
-  .users-table td {
-    padding: 0.5rem;
+  .user-card-footer {
+    flex-direction: column;
+  }
+
+  .voting-power-control {
+    width: 100%;
+    justify-content: space-between;
   }
 
   .btn {
-    padding: 0.4rem 0.8rem;
-    font-size: 0.75rem;
-    margin-bottom: 0.25rem;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .password-status-card {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .password-status-card .btn-primary {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .user-info h3 {
+    font-size: 1rem;
+  }
+
+  .user-avatar {
+    width: 48px;
+    height: 48px;
+    font-size: 1.25rem;
   }
 }

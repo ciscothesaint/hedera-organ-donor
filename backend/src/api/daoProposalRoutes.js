@@ -1,6 +1,7 @@
 const express = require('express');
 const Proposal = require('../db/models/Proposal');
 const User = require('../db/models/User');
+const SystemSettings = require('../db/models/SystemSettings');
 const DaoService = require('../services/daoService');
 const {
     authenticateDAO,
@@ -493,12 +494,32 @@ router.post('/:id/finalize', authenticateDAO, async (req, res) => {
 });
 
 /**
- * Emergency finalize a proposal (requires 75% supermajority)
+ * Emergency finalize a proposal (requires 75% supermajority + password)
  * POST /api/dao/proposals/:id/emergency-finalize
  */
 router.post('/:id/emergency-finalize', authenticateDAO, async (req, res) => {
     try {
         const { id } = req.params;
+        const { password } = req.body;
+
+        // Verify emergency finalize password
+        const settings = await SystemSettings.getSettings();
+
+        if (!password) {
+            return res.status(400).json({
+                error: 'Emergency finalize password required',
+                message: 'Please enter the emergency finalize password'
+            });
+        }
+
+        try {
+            await settings.verifyEmergencyPassword(password);
+        } catch (passwordError) {
+            return res.status(401).json({
+                error: 'Invalid password',
+                message: passwordError.message
+            });
+        }
 
         const proposal = await Proposal.findOne({ proposalId: parseInt(id) });
 

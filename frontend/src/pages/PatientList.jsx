@@ -19,13 +19,13 @@ function PatientList() {
       if (dataSource === 'blockchain') {
         // Fetch from blockchain via Mirror Node (FREE) - shows REAL on-chain data
         const mirrorResponse = await mirrorAPI.getAllPatients();
-        const blockchainPatients = mirrorResponse.data.data?.patients || [];
+        const blockchainPatients = mirrorResponse.data.patients || [];
 
         // Names are now in the blockchain events!
         setPatients(blockchainPatients);
         setCacheInfo({
           source: mirrorResponse.data.source,
-          cost: mirrorResponse.data.cost,
+          cost: 'FREE',
           cached: mirrorResponse.data.cached,
           cacheAge: mirrorResponse.data.cacheAge,
         });
@@ -219,16 +219,20 @@ function PatientList() {
                       </span>
                     </td>
                     <td>{patient.medicalScore || 'N/A'}</td>
-                    <td>{patient.blockNumber || 'N/A'}</td>
+                    <td>N/A</td>
                     <td style={{ fontSize: '0.75em' }}>
-                      <a
-                        href={`https://hashscan.io/testnet/transaction/${patient.transactionId || ''}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        style={{ color: '#007bff', textDecoration: 'none' }}
-                      >
-                        ✅ {(patient.transactionId || '').substring(0, 15)}...
-                      </a>
+                      {patient.blockchainTxId ? (
+                        <a
+                          href={`https://hashscan.io/testnet/transaction/${patient.blockchainTxId}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{ color: '#007bff', textDecoration: 'none' }}
+                        >
+                          ✅ {patient.blockchainTxId.substring(0, 15)}...
+                        </a>
+                      ) : (
+                        'N/A'
+                      )}
                     </td>
                   </tr>
                 ))

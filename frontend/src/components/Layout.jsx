@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../services/authStore';
+import NotificationBell from './NotificationBell';
 import './Layout.css';
 
 function Layout({ children }) {
@@ -21,6 +22,7 @@ function Layout({ children }) {
             <span className="network-badge">Hedera Testnet</span>
           </div>
           <div className="navbar-user">
+            <NotificationBell />
             <span className="user-name">{user?.username}</span>
             <span className="badge badge-info">{user?.role}</span>
             <button onClick={handleLogout} className="btn btn-danger btn-sm">

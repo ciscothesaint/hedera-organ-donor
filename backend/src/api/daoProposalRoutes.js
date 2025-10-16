@@ -3,6 +3,8 @@ const Proposal = require('../db/models/Proposal');
 const User = require('../db/models/User');
 const SystemSettings = require('../db/models/SystemSettings');
 const DaoService = require('../services/daoService');
+const ProposalExecutionService = require('../services/proposalExecutionService');
+const NotificationService = require('../services/notificationService');
 const {
     authenticateDAO,
     authorizeVoter,
@@ -14,6 +16,8 @@ const {
 
 const router = express.Router();
 const daoService = new DaoService();
+const executionService = new ProposalExecutionService();
+const notificationService = new NotificationService();
 
 /**
  * Get all proposals (paginated)
@@ -578,40 +582,53 @@ router.post('/:id/emergency-finalize', authenticateDAO, async (req, res) => {
 /**
  * Execute an approved proposal
  * POST /api/dao/proposals/:id/execute
+ * Automatically executes action on smart contract and updates database
  */
 router.post('/:id/execute', authenticateDAO, requireDoctorRole, async (req, res) => {
     try {
         const { id } = req.params;
+        const executorId = req.user._id.toString();
 
+        console.log(`🚀 Execute request for proposal #${id} by user ${executorId}`);
+
+        // Execute proposal using the execution service
+        // This will:
+        // 1. Call appropriate smart contract function (updateUrgency, removePatient, etc.)
+        // 2. Update patient database
+        // 3. Mark proposal as EXECUTED on DAO contract
+        // 4. Create notifications for all affected users
+        const result = await executionService.executeProposal(parseInt(id), executorId);
+
+        // Get the updated proposal
         const proposal = await Proposal.findOne({ proposalId: parseInt(id) });
 
-        if (!proposal) {
-            return res.status(404).json({ error: 'Proposal not found' });
+        // Create notifications for all users
+        try {
+            await notificationService.notifyProposalExecution(proposal, result);
+            console.log(`✅ Notifications created for proposal #${id} execution`);
+        } catch (notifError) {
+            console.error('⚠️  Failed to create notifications:', notifError.message);
+            // Continue anyway - execution was successful
         }
-
-        if (proposal.status !== 'APPROVED') {
-            return res.status(400).json({
-                error: 'Proposal not approved for execution',
-                status: proposal.status
-            });
-        }
-
-        if (proposal.executedAt) {
-            return res.status(400).json({ error: 'Proposal already executed' });
-        }
-
-        // Execute on blockchain
-        const result = await daoService.executeProposal(parseInt(id));
 
         res.json({
+            success: true,
             message: 'Proposal executed successfully',
-            transactionId: result.transactionId,
-            executedAt: new Date()
+            proposalId: result.proposalId,
+            proposalType: result.proposalType,
+            actionTransactionId: result.actionTransactionId,
+            daoTransactionId: result.daoTransactionId,
+            patientUpdate: result.patientUpdate,
+            executedAt: result.executedAt,
+            proposal: proposal.toObject()
         });
 
     } catch (error) {
-        console.error('Error executing proposal:', error);
-        res.status(500).json({ error: error.message });
+        console.error('❌ Error executing proposal:', error);
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
     }
 });
 

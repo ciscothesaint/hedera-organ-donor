@@ -21,6 +21,8 @@ function ProposalDetail() {
     const [showConfirmModal, setShowConfirmModal] = useState(false);
     const [isFinalizingLoading, setIsFinalizingLoading] = useState(false);
     const [emergencyPassword, setEmergencyPassword] = useState('');
+    const [showExecuteModal, setShowExecuteModal] = useState(false);
+    const [isExecuting, setIsExecuting] = useState(false);
 
     // Fetch proposal details on mount and when proposalId changes
     useEffect(() => {
@@ -88,6 +90,65 @@ function ProposalDetail() {
     const handleEmergencyFinalize = () => {
         // Show confirmation modal
         setShowConfirmModal(true);
+    };
+
+    const handleExecuteProposal = () => {
+        setShowExecuteModal(true);
+    };
+
+    const confirmExecuteProposal = async () => {
+        try {
+            setIsExecuting(true);
+            setShowExecuteModal(false);
+
+            const executePromise = daoProposalAPI.execute(proposalId);
+
+            toast.promise(
+                executePromise,
+                {
+                    loading: 'Executing proposal on blockchain...',
+                    success: (response) => {
+                        const data = response.data;
+                        return `✅ Proposal executed! Updated blockchain state.`;
+                    },
+                    error: (err) => {
+                        const msg = err.response?.data?.error || err.response?.data?.message;
+                        return msg || 'Proposal execution failed';
+                    },
+                },
+                {
+                    success: {
+                        duration: 6000,
+                        icon: '⚡',
+                    },
+                    error: {
+                        duration: 6000,
+                    },
+                }
+            );
+
+            const response = await executePromise;
+
+            // Show transaction details
+            if (response.data.actionTransactionId) {
+                setTimeout(() => {
+                    toast.success(`Action TX: ${response.data.actionTransactionId}`, {
+                        duration: 8000,
+                        icon: '🔗',
+                    });
+                }, 1000);
+            }
+
+            // Refresh proposal details
+            await fetchProposalDetails();
+
+        } catch (err) {
+            console.error('Error executing proposal:', err);
+            const errorMsg = err.response?.data?.error || err.response?.data?.message || 'Execution failed';
+            setError(errorMsg);
+        } finally {
+            setIsExecuting(false);
+        }
     };
 
     const confirmEmergencyFinalize = async () => {
@@ -227,7 +288,7 @@ function ProposalDetail() {
         <div className="proposal-detail-page">
             {/* Toast Notifications */}
             <Toaster
-                position="top-right"
+                position="bottom-right"
                 toastOptions={{
                     duration: 4000,
                     style: {
@@ -500,11 +561,11 @@ function ProposalDetail() {
                         )}
 
                         {/* Finalized Status - Show for completed proposals */}
-                        {(proposal.status === 'APPROVED' || proposal.status === 'REJECTED' || proposal.status === 'EXPIRED') && (
+                        {(proposal.status === 'APPROVED' || proposal.status === 'REJECTED' || proposal.status === 'EXPIRED' || proposal.status === 'EXECUTED') && (
                             <div className="finalized-status-section">
                                 <div className={`finalized-badge ${proposal.status.toLowerCase()}`}>
                                     <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        {proposal.status === 'APPROVED' ? (
+                                        {proposal.status === 'APPROVED' || proposal.status === 'EXECUTED' ? (
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                                         ) : proposal.status === 'REJECTED' ? (
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -516,6 +577,45 @@ function ProposalDetail() {
                                 </div>
                                 {proposal.finalizedAt && (
                                     <p className="finalized-date">Finalized on {formatDate(proposal.finalizedAt)}</p>
+                                )}
+
+                                {/* Execute Button - Show for APPROVED proposals that haven't been executed */}
+                                {proposal.status === 'APPROVED' && !proposal.executedAt && (
+                                    <button
+                                        onClick={handleExecuteProposal}
+                                        className="execute-proposal-btn"
+                                        disabled={isExecuting}
+                                    >
+                                        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" width="20" height="20">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                        </svg>
+                                        Execute Proposal
+                                    </button>
+                                )}
+
+                                {/* Execution Status - Show for EXECUTED proposals */}
+                                {proposal.status === 'EXECUTED' && proposal.executedAt && (
+                                    <div className="execution-status">
+                                        <p className="execution-date">
+                                            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" width="16" height="16">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                            </svg>
+                                            Executed on {formatDate(proposal.executedAt)}
+                                        </p>
+                                        {proposal.executionTxId && (
+                                            <a
+                                                href={`https://hashscan.io/testnet/transaction/${proposal.executionTxId}`}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="tx-link"
+                                            >
+                                                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" width="16" height="16">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                                </svg>
+                                                View Transaction
+                                            </a>
+                                        )}
+                                    </div>
                                 )}
                             </div>
                         )}
@@ -613,6 +713,37 @@ function ProposalDetail() {
                         }
                     ]}
                     loading={isFinalizingLoading}
+                />
+            )}
+
+            {/* Execute Proposal Confirmation Modal */}
+            {proposal && (
+                <ConfirmModal
+                    isOpen={showExecuteModal}
+                    onClose={() => setShowExecuteModal(false)}
+                    onConfirm={confirmExecuteProposal}
+                    title="Execute Approved Proposal?"
+                    message="This will automatically execute the action on the blockchain. The smart contract will be called to perform the requested operation."
+                    variant="success"
+                    confirmText="Execute Now"
+                    cancelText="Cancel"
+                    warningText="⚡ This action will update the blockchain state and cannot be undone."
+                    details={[
+                        { label: 'Proposal ID', value: `#${proposal.proposalId}` },
+                        { label: 'Proposal Type', value: proposal.proposalType.replace(/_/g, ' ') },
+                        { label: 'Patient ID', value: proposal.patientHash?.split(' ')[0] || 'N/A' },
+                        proposal.proposalType === 'URGENCY_UPDATE' ? {
+                            label: 'Action',
+                            value: `Change urgency from ${proposal.currentValue} to ${proposal.proposedValue}`,
+                            variant: 'info'
+                        } : proposal.proposalType === 'PATIENT_REMOVAL' ? {
+                            label: 'Action',
+                            value: 'Remove patient from waitlist',
+                            variant: 'warning'
+                        } : null,
+                        { label: 'Status', value: proposal.status, variant: 'success' }
+                    ].filter(Boolean)}
+                    loading={isExecuting}
                 />
             )}
         </div>

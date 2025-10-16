@@ -59,6 +59,27 @@ const patientSchema = new mongoose.Schema({
         },
         diagnosis: String,
         complications: [String],
+        urgencyHistory: [{
+            oldValue: {
+                type: Number,
+                min: 1,
+                max: 5
+            },
+            newValue: {
+                type: Number,
+                min: 1,
+                max: 5
+            },
+            changedBy: String,
+            changedByName: String,
+            reason: String,
+            proposalId: Number,
+            blockchainTxId: String,
+            timestamp: {
+                type: Date,
+                default: Date.now
+            }
+        }]
     },
     hospitalInfo: {
         hospitalId: {
@@ -86,6 +107,8 @@ const patientSchema = new mongoose.Schema({
         },
         removalReason: String,
         removalDate: Date,
+        removedByProposal: Number,
+        removalTxId: String,
     },
     matching: {
         isMatched: {

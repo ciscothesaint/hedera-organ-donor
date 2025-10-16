@@ -55,12 +55,25 @@ router.get('/patients/waitlist/:organType', async (req, res) => {
 
         // Transform the waitlist data to match frontend expectations
         const transformedWaitlist = result.waitlist.map((blockchainPatient, index) => {
-            // Try to match with MongoDB patient by blood type, urgency level, and organ type
-            const matchedMongoPatient = mongoPatients.find(mp =>
-                mp.medicalInfo.bloodType === blockchainPatient.bloodType &&
-                mp.medicalInfo.urgencyLevel === blockchainPatient.urgencyLevel &&
-                mp.medicalInfo.organType === organType.toUpperCase()
-            );
+            // Try to match with MongoDB patient by blockchain transaction ID (most reliable)
+            // Falls back to matching by blood type + urgency if transaction ID not available
+            let matchedMongoPatient = null;
+
+            // Primary match: by blockchain transaction ID
+            if (blockchainPatient.transactionId) {
+                matchedMongoPatient = mongoPatients.find(mp =>
+                    mp.blockchainData?.transactionId === blockchainPatient.transactionId
+                );
+            }
+
+            // Fallback match: by blood type + urgency + organ type (less reliable)
+            if (!matchedMongoPatient) {
+                matchedMongoPatient = mongoPatients.find(mp =>
+                    mp.medicalInfo.bloodType === blockchainPatient.bloodType &&
+                    mp.medicalInfo.urgencyLevel === blockchainPatient.urgencyLevel &&
+                    mp.medicalInfo.organType === organType.toUpperCase()
+                );
+            }
 
             // Calculate wait time in days
             let registrationDate;
@@ -122,15 +135,26 @@ router.get('/patients/waitlist/:organType', async (req, res) => {
             };
 
             return {
-                // Use real patient ID from MongoDB if matched, otherwise use blockchain hash
-                patientId: matchedMongoPatient?.patientId || blockchainPatient.patientId,
-                patientHash: blockchainPatient.patientId, // Blockchain hash for verification link
+                // Patient ID: Show MongoDB's real patient ID (e.g., "543543543")
+                patientId: matchedMongoPatient?.patientId || 'N/A',
+
+                // Patient Hash: Show a consistent identifier for blockchain verification
+                // Use MongoDB patientId formatted as hash, or blockchain timestamp-based ID as fallback
+                patientHash: matchedMongoPatient?.patientId
+                    ? `PATIENT-${matchedMongoPatient.patientId}`
+                    : blockchainPatient.patientId,
+
                 bloodType: blockchainPatient.bloodType || 'N/A',
                 urgency: urgencyMap[blockchainPatient.urgencyLevel] || 'ROUTINE',
                 urgencyLevel: blockchainPatient.urgencyLevel,
                 waitTime,
                 registeredAt,
-                txId: blockchainPatient.transactionId || matchedMongoPatient?.blockchainData?.transactionId || 'N/A',
+
+                // Transaction ID: Use blockchain transaction ID for Hashscan verification link
+                txId: matchedMongoPatient?.blockchainData?.transactionId
+                    || blockchainPatient.transactionId
+                    || 'N/A',
+
                 firstName: matchedMongoPatient?.personalInfo?.firstName || blockchainPatient.firstName,
                 lastName: matchedMongoPatient?.personalInfo?.lastName || blockchainPatient.lastName,
                 medicalScore: blockchainPatient.medicalScore,

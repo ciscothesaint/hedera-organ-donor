@@ -1,484 +1,199 @@
-const {
-    ContractExecuteTransaction,
-    ContractCallQuery,
-    Hbar,
-    ContractFunctionParameters
-} = require("@hashgraph/sdk");
-const hederaClient = require('../hedera/client');
-const contractRegistry = require('../config/contracts');
+/**
+ * Organ Matching Service
+ * Implements the matching algorithm from smart contracts for server-side calculations
+ * Based on WaitlistRegistry.sol and MatchingEngine.sol logic
+ */
 
 /**
- * Matching Service
- * Handles organ offers, matching algorithm, and allocation
+ * Blood type compatibility matrix
+ * Key: Recipient blood type
+ * Value: Array of compatible donor blood types
  */
-class MatchingService {
-    constructor() {
-        this.client = hederaClient.getClient();
-        this.matchingContractId = contractRegistry.getContractAddress('MatchingEngine');
-        this.waitlistContractId = contractRegistry.getContractAddress('WaitlistRegistry');
-    }
-
-    /**
-     * Register a new organ offer
-     * @param {Object} organData - Organ details
-     * @returns {Promise<Object>} Offer result with offer ID
-     */
-    async offerOrgan(organData) {
-        try {
-            const {
-                organType,
-                bloodType,
-                location,
-                donorInfo,
-                weight = 500,  // Default weight in grams
-                viabilityHours = 24  // Default viability 24 hours
-            } = organData;
-
-            // Validate inputs
-            if (!organType || !bloodType || !location) {
-                throw new Error("Missing required fields");
-            }
-
-            // Generate unique organ ID
-            const organId = `ORG-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-
-            console.log(`Offering organ: ${organType} (${bloodType}) from ${location}`);
-
-            const transaction = new ContractExecuteTransaction()
-                .setContractId(this.matchingContractId)
-                .setGas(3000000)
-                .setFunction(
-                    "registerOrgan",
-                    new ContractFunctionParameters()
-                        .addString(organId)
-                        .addString(organType)
-                        .addString(bloodType)
-                        .addUint256(weight)
-                        .addUint256(viabilityHours)
-                )
-                .setMaxTransactionFee(new Hbar(3));
-
-            const response = await transaction.execute(this.client);
-            const receipt = await response.getReceipt(this.client);
-
-            // Get offer ID from logs
-            const record = await response.getRecord(this.client);
-
-            console.log(`✅ Organ offered successfully`);
-
-            // Submit to consensus for transparency
-            await this.logOrganOffer({
-                organId,
-                organType,
-                bloodType,
-                location,
-                weight,
-                viabilityHours,
-                donorInfo,
-                timestamp: new Date().toISOString()
-            });
-
-            return {
-                success: true,
-                transactionId: response.transactionId.toString(),
-                status: receipt.status.toString(),
-                offerId: organId
-            };
-
-        } catch (error) {
-            console.error('❌ Error offering organ:', error);
-            throw new Error(`Organ offer failed: ${error.message}`);
-        }
-    }
-
-    /**
-     * Run matching algorithm to find best recipient
-     * @param {number} offerId - Organ offer ID
-     * @returns {Promise<Object>} Match result with patient hash
-     */
-    async runMatching(offerId) {
-        try {
-            console.log(`Running matching algorithm for offer #${offerId}`);
-
-            // First, get the organ details
-            const organDetails = await this.getOrganOffer(offerId);
-
-            // Get all candidates from waitlist
-            const candidates = await this.getCandidates(organDetails.organType);
-
-            if (candidates.length === 0) {
-                throw new Error("No candidates found in waitlist");
-            }
-
-            console.log(`   Found ${candidates.length} candidates`);
-
-            // Run matching algorithm on-chain
-            const transaction = new ContractExecuteTransaction()
-                .setContractId(this.matchingContractId)
-                .setGas(500000)
-                .setFunction(
-                    "runMatching",
-                    new ContractFunctionParameters()
-                        .addUint256(offerId)
-                        .addBytes32Array(candidates.map(c =>
-                            Buffer.from(c.slice(2), 'hex')
-                        ))
-                )
-                .setMaxTransactionFee(new Hbar(10));
-
-            const response = await transaction.execute(this.client);
-            const receipt = await response.getReceipt(this.client);
-
-            // Get matched patient from logs
-            const record = await response.getRecord(this.client);
-
-            const matchedPatient = null; // TODO: Parse from contract events
-
-            console.log(`✅ Match found successfully`);
-
-            // Log match result
-            await this.logMatchResult({
-                offerId,
-                matchedPatient,
-                candidatesCount: candidates.length,
-                timestamp: new Date().toISOString()
-            });
-
-            return {
-                success: true,
-                transactionId: response.transactionId.toString(),
-                matchedPatient,
-                status: receipt.status.toString()
-            };
-
-        } catch (error) {
-            console.error('❌ Error running matching:', error);
-            throw new Error(`Matching failed: ${error.message}`);
-        }
-    }
-
-    /**
-     * Calculate match scores for all candidates
-     * @param {number} offerId - Organ offer ID
-     * @param {Array<string>} candidates - Array of patient hashes
-     * @returns {Promise<Array>} Array of match scores sorted by score
-     */
-    async calculateMatchScores(offerId, candidates) {
-        try {
-            const scores = [];
-
-            console.log(`Calculating match scores for ${candidates.length} candidates...`);
-
-            for (const candidate of candidates) {
-                try {
-                    const query = new ContractCallQuery()
-                        .setContractId(this.matchingContractId)
-                        .setGas(100000)
-                        .setFunction(
-                            "calculateMatchScore",
-                            new ContractFunctionParameters()
-                                .addBytes32(Buffer.from(candidate.slice(2), 'hex'))
-                                .addUint256(offerId)
-                        );
-
-                    const response = await query.execute(this.client);
-                    const score = response.getUint256(0);
-
-                    scores.push({
-                        patientHash: candidate,
-                        score: score.toString()
-                    });
-                } catch (error) {
-                    console.warn(`Could not calculate score for candidate ${candidate}:`, error.message);
-                }
-            }
-
-            // Sort by score descending
-            scores.sort((a, b) => parseInt(b.score) - parseInt(a.score));
-
-            console.log(`   Top match score: ${scores[0]?.score || 'N/A'}`);
-
-            return scores;
-
-        } catch (error) {
-            console.error('❌ Error calculating scores:', error);
-            throw new Error(`Score calculation failed: ${error.message}`);
-        }
-    }
-
-    /**
-     * Get organ offer details
-     * @param {number} offerId - Organ offer ID
-     * @returns {Promise<Object>} Organ offer data
-     */
-    async getOrganOffer(offerId) {
-        try {
-            const query = new ContractCallQuery()
-                .setContractId(this.matchingContractId)
-                .setGas(100000)
-                .setFunction(
-                    "organOffers",
-                    new ContractFunctionParameters()
-                        .addUint256(offerId)
-                );
-
-            const response = await query.execute(this.client);
-
-            // Parse organ offer struct
-            // TODO: Implement based on contract return structure
-            return {
-                organType: 'KIDNEY', // placeholder
-                bloodType: 'O+',
-                location: 'Location',
-                availableTime: Date.now(),
-                isMatched: false
-            };
-
-        } catch (error) {
-            console.error('❌ Error getting organ offer:', error);
-            throw new Error(`Failed to get organ offer: ${error.message}`);
-        }
-    }
-
-    /**
-     * Get candidates from waitlist for specific organ type
-     * @param {string} organType - Type of organ
-     * @returns {Promise<Array<string>>} Array of patient hashes
-     */
-    async getCandidates(organType) {
-        try {
-            const query = new ContractCallQuery()
-                .setContractId(this.waitlistContractId)
-                .setGas(1000000)
-                .setFunction(
-                    "getWaitlist",
-                    new ContractFunctionParameters()
-                        .addString(organType)
-                );
-
-            const response = await query.execute(this.client);
-
-            // Parse waitlist response
-            // TODO: Implement based on contract return structure
-            const candidates = [];
-
-            return candidates;
-
-        } catch (error) {
-            console.error('❌ Error getting candidates:', error);
-            throw new Error(`Failed to get candidates: ${error.message}`);
-        }
-    }
-
-    /**
-     * Log organ offer to Hedera Consensus Service
-     * @param {Object} data - Organ offer data
-     */
-    async logOrganOffer(data) {
-        const { TopicMessageSubmitTransaction } = require("@hashgraph/sdk");
-
-        try {
-            const topicId = contractRegistry.getTopicId('OrganMatch');
-
-            if (!topicId) {
-                console.warn('⚠️  Organ match topic ID not configured');
-                return;
-            }
-
-            const transaction = new TopicMessageSubmitTransaction()
-                .setTopicId(topicId)
-                .setMessage(JSON.stringify({
-                    type: 'ORGAN_OFFER',
-                    ...data
-                }));
-
-            await transaction.execute(this.client);
-
-        } catch (error) {
-            console.error('❌ Error logging organ offer:', error);
-            // Don't throw - logging is supplementary
-        }
-    }
-
-    /**
-     * Log match result to Hedera Consensus Service
-     * @param {Object} data - Match result data
-     */
-    async logMatchResult(data) {
-        const { TopicMessageSubmitTransaction } = require("@hashgraph/sdk");
-
-        try {
-            const topicId = contractRegistry.getTopicId('OrganMatch');
-
-            if (!topicId) {
-                console.warn('⚠️  Organ match topic ID not configured');
-                return;
-            }
-
-            const transaction = new TopicMessageSubmitTransaction()
-                .setTopicId(topicId)
-                .setMessage(JSON.stringify({
-                    type: 'MATCH_RESULT',
-                    ...data
-                }));
-
-            await transaction.execute(this.client);
-
-        } catch (error) {
-            console.error('❌ Error logging match result:', error);
-            // Don't throw - logging is supplementary
-        }
-    }
-
-    /**
-     * Find matching patients for an organ offer
-     * @param {Object} criteria - Organ criteria (organType, bloodType, location)
-     * @returns {Promise<Array>} Array of matching patients with scores
-     */
-    async findMatches(criteria) {
-        try {
-            const { organType, bloodType, location } = criteria;
-
-            console.log(`🔍 Finding matches for ${organType} (${bloodType}) in ${location}...`);
-
-            // Get all candidates from waitlist for this organ type
-            const query = new ContractCallQuery()
-                .setContractId(this.waitlistContractId)
-                .setGas(1000000)
-                .setFunction(
-                    "getWaitlist",
-                    new ContractFunctionParameters()
-                        .addString(organType)
-                );
-
-            const response = await query.execute(this.client);
-
-            // Parse the response to extract patient hashes
-            // Note: This is a simplified version - actual parsing depends on contract structure
-            const patientCount = response.getUint256(0) || 0;
-
-            console.log(`   Found ${patientCount} patients in ${organType} waitlist`);
-
-            // For now, return mock matches since contract integration needs completion
-            // In production, this would call calculateMatchScores with real patient data
-            const matches = [];
-
-            // TODO: Replace with actual contract data parsing
-            if (patientCount > 0) {
-                matches.push({
-                    patientHash: '0x' + '1'.repeat(64), // Placeholder
-                    score: 95,
-                    reason: 'Blood type match, high urgency, same location'
-                });
-            }
-
-            console.log(`   ✅ Found ${matches.length} compatible matches`);
-
-            return matches;
-
-        } catch (error) {
-            console.error('❌ Error finding matches:', error);
-            throw new Error(`Match finding failed: ${error.message}`);
-        }
-    }
-
-    /**
-     * Allocate an organ to a patient
-     * @param {Object} allocationData - Contains organId and patientHash
-     * @returns {Promise<Object>} Allocation result
-     */
-    async allocateOrgan(allocationData) {
-        try {
-            const { organId, patientHash } = allocationData;
-
-            console.log(`🎯 Allocating organ ${organId} to patient ${patientHash.substring(0, 16)}...`);
-
-            // Execute allocation transaction
-            const transaction = new ContractExecuteTransaction()
-                .setContractId(this.matchingContractId)
-                .setGas(500000)
-                .setFunction(
-                    "allocateOrgan",
-                    new ContractFunctionParameters()
-                        .addString(organId)
-                        .addBytes32(Buffer.from(patientHash.slice(2), 'hex'))
-                )
-                .setMaxTransactionFee(new Hbar(5));
-
-            const response = await transaction.execute(this.client);
-            const receipt = await response.getReceipt(this.client);
-
-            console.log(`✅ Organ allocated successfully`);
-
-            // Log allocation to consensus service
-            await this.logAllocation({
-                organId,
-                patientHash,
-                timestamp: new Date().toISOString()
-            });
-
-            return {
-                success: true,
-                transactionId: response.transactionId.toString(),
-                status: receipt.status.toString()
-            };
-
-        } catch (error) {
-            console.error('❌ Error allocating organ:', error);
-            throw new Error(`Allocation failed: ${error.message}`);
-        }
-    }
-
-    /**
-     * Log allocation to Hedera Consensus Service
-     * @param {Object} data - Allocation data
-     */
-    async logAllocation(data) {
-        const { TopicMessageSubmitTransaction } = require("@hashgraph/sdk");
-
-        try {
-            const topicId = contractRegistry.getTopicId('OrganMatch');
-
-            if (!topicId) {
-                console.warn('⚠️  Organ match topic ID not configured');
-                return;
-            }
-
-            const transaction = new TopicMessageSubmitTransaction()
-                .setTopicId(topicId)
-                .setMessage(JSON.stringify({
-                    type: 'ALLOCATION',
-                    ...data
-                }));
-
-            await transaction.execute(this.client);
-
-        } catch (error) {
-            console.error('❌ Error logging allocation:', error);
-            // Don't throw - logging is supplementary
-        }
-    }
-
-    /**
-     * Check if blood types are compatible
-     * @param {string} recipientBlood - Recipient blood type
-     * @param {string} donorBlood - Donor blood type
-     * @returns {boolean} True if compatible
-     */
-    isCompatibleBloodType(recipientBlood, donorBlood) {
-        const compatibility = {
-            'O-': ['O-'],
-            'O+': ['O-', 'O+'],
-            'A-': ['O-', 'A-'],
-            'A+': ['O-', 'O+', 'A-', 'A+'],
-            'B-': ['O-', 'B-'],
-            'B+': ['O-', 'O+', 'B-', 'B+'],
-            'AB-': ['O-', 'A-', 'B-', 'AB-'],
-            'AB+': ['O-', 'O+', 'A-', 'A+', 'B-', 'B+', 'AB-', 'AB+']
-        };
-
-        return compatibility[recipientBlood]?.includes(donorBlood) || false;
-    }
+const BLOOD_COMPATIBILITY = {
+    'A+': ['A+', 'A-', 'O+', 'O-'],
+    'A-': ['A-', 'O-'],
+    'B+': ['B+', 'B-', 'O+', 'O-'],
+    'B-': ['B-', 'O-'],
+    'AB+': ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'], // Universal recipient
+    'AB-': ['A-', 'B-', 'AB-', 'O-'],
+    'O+': ['O+', 'O-'],
+    'O-': ['O-'], // Universal donor when donating
+};
+
+/**
+ * Urgency level mapping
+ * Used for calculating composite scores
+ */
+const URGENCY_MULTIPLIER = 1000; // Urgency gets highest priority
+
+/**
+ * Check if donor and recipient blood types are compatible
+ * @param {string} donorBlood - Donor's blood type (e.g., 'O+')
+ * @param {string} recipientBlood - Recipient's blood type (e.g., 'A+')
+ * @returns {boolean} True if compatible, false otherwise
+ */
+function isBloodCompatible(donorBlood, recipientBlood) {
+    const compatible = BLOOD_COMPATIBILITY[recipientBlood] || [];
+    return compatible.includes(donorBlood);
 }
 
-module.exports = MatchingService;
+/**
+ * Calculate composite score for a patient (waitlist ranking)
+ * Formula: (Urgency � 1000) + Medical Score + Wait Time Bonus
+ *
+ * This matches the smart contract logic in WaitlistRegistry.sol line 137:
+ * compositeScore = (patient.urgencyLevel * 1000) + patient.medicalScore + waitTimeBonus
+ *
+ * @param {Object} patient - Patient object with medical info and waitlist data
+ * @returns {number} Composite score for ranking
+ */
+function calculateCompositeScore(patient) {
+    const urgencyLevel = patient.medicalInfo?.urgencyLevel || patient.urgencyLevel || 1;
+    const medicalScore = patient.medicalInfo?.medicalScore || patient.medicalScore || 0;
+    const registrationDate = patient.waitlistInfo?.registrationDate || patient.registrationDate || new Date();
+
+    // Calculate days waiting
+    const now = new Date();
+    const regDate = new Date(registrationDate);
+    const daysWaiting = Math.max(0, Math.floor((now - regDate) / (1000 * 60 * 60 * 24)));
+
+    // Composite score formula (matches smart contract)
+    const compositeScore = (urgencyLevel * URGENCY_MULTIPLIER) + medicalScore + daysWaiting;
+
+    return compositeScore;
+}
+
+/**
+ * Calculate match score between an organ and a patient
+ * This implements the simplified version from MatchingEngine.sol
+ *
+ * @param {Object} organ - Organ object with type, blood type, etc.
+ * @param {Object} patient - Patient object with medical info
+ * @returns {Object} Match result with score and breakdown
+ */
+function calculateMatchScore(organ, patient) {
+    const breakdown = {
+        bloodCompatible: false,
+        urgencyPoints: 0,
+        medicalScorePoints: 0,
+        waitTimePoints: 0,
+        totalScore: 0,
+    };
+
+    // Extract data from organ and patient
+    const donorBlood = organ.organInfo?.bloodType || organ.bloodType;
+    const recipientBlood = patient.medicalInfo?.bloodType || patient.bloodType;
+    const urgencyLevel = patient.medicalInfo?.urgencyLevel || patient.urgencyLevel || 1;
+    const medicalScore = patient.medicalInfo?.medicalScore || patient.medicalScore || 0;
+    const registrationDate = patient.waitlistInfo?.registrationDate || patient.registrationDate || new Date();
+
+    // 1. Blood Compatibility Check (CRITICAL - must pass or score = 0)
+    breakdown.bloodCompatible = isBloodCompatible(donorBlood, recipientBlood);
+    if (!breakdown.bloodCompatible) {
+        return {
+            ...breakdown,
+            reason: `Incompatible blood types: Donor ${donorBlood} � Recipient ${recipientBlood}`,
+        };
+    }
+
+    // 2. Urgency Level (Highest Priority)
+    // Matches smart contract: urgencyLevel * 1000
+    breakdown.urgencyPoints = urgencyLevel * URGENCY_MULTIPLIER;
+
+    // 3. Medical Score (0-100 points)
+    breakdown.medicalScorePoints = medicalScore;
+
+    // 4. Wait Time Bonus (1 point per day)
+    const now = new Date();
+    const regDate = new Date(registrationDate);
+    const daysWaiting = Math.max(0, Math.floor((now - regDate) / (1000 * 60 * 60 * 24)));
+    breakdown.waitTimePoints = daysWaiting;
+
+    // Total Score
+    breakdown.totalScore = breakdown.urgencyPoints + breakdown.medicalScorePoints + breakdown.waitTimePoints;
+    breakdown.reason = 'Compatible match';
+
+    return breakdown;
+}
+
+/**
+ * Find best matches for an organ from a waitlist
+ * Returns top N patients sorted by match score
+ *
+ * @param {Object} organ - Organ to match
+ * @param {Array} waitlist - Array of patient objects
+ * @param {number} topN - Number of top matches to return (default: 5)
+ * @returns {Array} Array of match objects with patient, score, and breakdown
+ */
+function findBestMatches(organ, waitlist, topN = 5) {
+    // Calculate scores for all patients
+    const matches = waitlist.map(patient => {
+        const scoreBreakdown = calculateMatchScore(organ, patient);
+        return {
+            patient,
+            score: scoreBreakdown.totalScore,
+            breakdown: scoreBreakdown,
+            compatible: scoreBreakdown.bloodCompatible,
+        };
+    });
+
+    // Filter only compatible patients
+    const compatibleMatches = matches.filter(m => m.compatible);
+
+    // Sort by score (descending - highest score first)
+    compatibleMatches.sort((a, b) => b.score - a.score);
+
+    // Return top N matches
+    return compatibleMatches.slice(0, topN);
+}
+
+/**
+ * Calculate match probability for a patient
+ * Probability = (patient's score / top patient's score) * 100
+ *
+ * @param {number} patientScore - Current patient's composite score
+ * @param {number} topScore - Highest score in the waitlist
+ * @returns {number} Probability percentage (0-100)
+ */
+function calculateMatchProbability(patientScore, topScore) {
+    if (topScore === 0) return 0;
+    const probability = (patientScore / topScore) * 100;
+    return Math.min(100, Math.max(0, probability));
+}
+
+/**
+ * Get urgency level as text from number
+ * @param {number} level - Urgency level (1-5)
+ * @returns {string} Urgency text
+ */
+function getUrgencyText(level) {
+    const urgencyMap = {
+        1: 'LOW',
+        2: 'ROUTINE',
+        3: 'MODERATE',
+        4: 'HIGH',
+        5: 'CRITICAL',
+    };
+    return urgencyMap[level] || 'ROUTINE';
+}
+
+/**
+ * Get all compatible blood types for a recipient
+ * @param {string} recipientBlood - Recipient's blood type
+ * @returns {Array} Array of compatible donor blood types
+ */
+function getCompatibleBloodTypes(recipientBlood) {
+    return BLOOD_COMPATIBILITY[recipientBlood] || [];
+}
+
+module.exports = {
+    isBloodCompatible,
+    calculateCompositeScore,
+    calculateMatchScore,
+    findBestMatches,
+    calculateMatchProbability,
+    getUrgencyText,
+    getCompatibleBloodTypes,
+    BLOOD_COMPATIBILITY,
+    URGENCY_MULTIPLIER,
+};

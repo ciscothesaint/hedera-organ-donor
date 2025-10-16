@@ -134,6 +134,17 @@ router.get('/patients/waitlist/:organType', async (req, res) => {
                 5: 'CRITICAL'
             };
 
+            // Calculate composite score and match probability
+            const matchingService = require('../services/matchingService');
+            const compositeScore = matchedMongoPatient
+                ? matchingService.calculateCompositeScore(matchedMongoPatient)
+                : (blockchainPatient.urgencyLevel * 1000) + (blockchainPatient.medicalScore || 0);
+
+            // Calculate days waiting for display
+            const now = new Date();
+            const regDate = registrationDate || new Date(matchedMongoPatient?.waitlistInfo?.registrationDate);
+            const daysWaiting = regDate ? Math.max(0, Math.floor((now - regDate) / (1000 * 60 * 60 * 24))) : 0;
+
             return {
                 // Patient ID: Show MongoDB's real patient ID (e.g., "543543543")
                 patientId: matchedMongoPatient?.patientId || 'N/A',
@@ -149,6 +160,7 @@ router.get('/patients/waitlist/:organType', async (req, res) => {
                 urgencyLevel: blockchainPatient.urgencyLevel,
                 waitTime,
                 registeredAt,
+                daysWaiting, // NEW: Days waiting as number
 
                 // Transaction ID: Use blockchain transaction ID for Hashscan verification link
                 txId: matchedMongoPatient?.blockchainData?.transactionId
@@ -161,16 +173,26 @@ router.get('/patients/waitlist/:organType', async (req, res) => {
                 weight: blockchainPatient.weight,
                 height: blockchainPatient.height,
                 isActive: blockchainPatient.isActive,
-                isVerified: !!matchedMongoPatient // Flag to show if blockchain record matches MongoDB
+                isVerified: !!matchedMongoPatient, // Flag to show if blockchain record matches MongoDB
+                compositeScore // NEW: Composite score for ranking
             };
         });
+
+        // Calculate match probabilities for all patients
+        const topScore = Math.max(...transformedWaitlist.map(p => p.compositeScore || 0), 1);
+        const matchingService = require('../services/matchingService');
+
+        const waitlistWithProbability = transformedWaitlist.map(patient => ({
+            ...patient,
+            matchProbability: matchingService.calculateMatchProbability(patient.compositeScore || 0, topScore) // NEW: Match probability
+        }));
 
         res.json({
             success: true,
             data: {
                 organType: result.organType,
-                waitlist: transformedWaitlist,
-                count: transformedWaitlist.length
+                waitlist: waitlistWithProbability,
+                count: waitlistWithProbability.length
             },
             source: 'mirror-node',
             cost: 'FREE',
@@ -735,6 +757,251 @@ router.get('/dao/proposals/:id/votes', async (req, res) => {
 
     } catch (error) {
         console.error('Error fetching votes:', error);
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
+    }
+});
+
+/**
+ * ============================================
+ * ORGAN MATCHING ROUTES - PUBLIC TRANSPARENCY
+ * Shows how the matching algorithm works
+ * FREE - No authentication required
+ * ============================================
+ */
+
+/**
+ * GET /api/mirror/organs/available
+ * Get all available organs for matching (FREE!)
+ */
+router.get('/organs/available', async (req, res) => {
+    try {
+        const Organ = require('../db/models/Organ');
+
+        // Fetch available organs from MongoDB
+        const organs = await Organ.find({
+            'allocationInfo.status': 'AVAILABLE',
+            'timing.expiryTime': { $gt: new Date() }
+        })
+        .select('organId organInfo timing blockchainData')
+        .lean();
+
+        // Transform to frontend format
+        const availableOrgans = organs.map(organ => ({
+            organId: organ.organId,
+            organType: organ.organInfo.organType,
+            bloodType: organ.organInfo.bloodType,
+            weight: organ.organInfo.weight,
+            viabilityHours: organ.organInfo.viabilityHours,
+            harvestTime: organ.timing.harvestTime,
+            expiryTime: organ.timing.expiryTime,
+            hoursRemaining: Math.max(0, Math.round((new Date(organ.timing.expiryTime) - new Date()) / (1000 * 60 * 60))),
+            blockchainTxId: organ.blockchainData?.transactionId
+        }));
+
+        res.json({
+            success: true,
+            organs: availableOrgans,
+            count: availableOrgans.length,
+            source: 'mongodb',
+            cost: 'FREE',
+            message: `${availableOrgans.length} organ(s) available for matching`
+        });
+
+    } catch (error) {
+        console.error('Error fetching available organs:', error);
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
+    }
+});
+
+/**
+ * POST /api/mirror/matching/simulate
+ * Simulate organ matching with current waitlist (FREE!)
+ *
+ * Body: {
+ *   organType: 'HEART',
+ *   bloodType: 'O+',
+ *   weight: 250 (optional)
+ * }
+ */
+router.post('/matching/simulate', async (req, res) => {
+    try {
+        const matchingService = require('../services/matchingService');
+        const Patient = require('../db/models/Patient');
+
+        const { organType, bloodType, weight } = req.body;
+
+        if (!organType || !bloodType) {
+            return res.status(400).json({
+                success: false,
+                error: 'organType and bloodType are required'
+            });
+        }
+
+        // Create simulated organ object
+        const simulatedOrgan = {
+            organType: organType.toUpperCase(),
+            bloodType: bloodType.toUpperCase(),
+            weight: weight || 0
+        };
+
+        // Fetch active patients for this organ type
+        const waitlist = await Patient.find({
+            'medicalInfo.organType': organType.toUpperCase(),
+            'waitlistInfo.isActive': true
+        })
+        .select('patientId personalInfo medicalInfo waitlistInfo')
+        .lean();
+
+        // Find best matches
+        const matches = matchingService.findBestMatches(simulatedOrgan, waitlist, 5);
+
+        // Transform results for frontend
+        const topMatches = matches.map((match, index) => ({
+            rank: index + 1,
+            patientId: match.patient.patientId,
+            firstName: match.patient.personalInfo?.firstName,
+            lastName: match.patient.personalInfo?.lastName,
+            bloodType: match.patient.medicalInfo.bloodType,
+            urgencyLevel: match.patient.medicalInfo.urgencyLevel,
+            medicalScore: match.patient.medicalInfo.medicalScore,
+            daysWaiting: Math.floor(
+                (new Date() - new Date(match.patient.waitlistInfo.registrationDate)) / (1000 * 60 * 60 * 24)
+            ),
+            totalScore: match.score,
+            breakdown: {
+                bloodCompatible: match.breakdown.bloodCompatible,
+                urgencyPoints: match.breakdown.urgencyPoints,
+                medicalScorePoints: match.breakdown.medicalScorePoints,
+                waitTimePoints: match.breakdown.waitTimePoints
+            },
+            matchProbability: matchingService.calculateMatchProbability(
+                match.score,
+                matches[0]?.score || 1
+            )
+        }));
+
+        res.json({
+            success: true,
+            simulatedOrgan,
+            topMatches,
+            totalCompatible: matches.length,
+            totalWaitlist: waitlist.length,
+            algorithm: {
+                formula: 'Score = (Urgency × 1000) + Medical Score + Days Waiting',
+                bloodCompatibility: 'Required - incompatible patients excluded',
+                sorting: 'Highest score first'
+            },
+            source: 'mongodb + matching-service',
+            cost: 'FREE',
+            message: `Found ${topMatches.length} compatible match(es) from ${waitlist.length} patient(s) in waitlist`
+        });
+
+    } catch (error) {
+        console.error('Error simulating match:', error);
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
+    }
+});
+
+/**
+ * GET /api/mirror/matching/patient-probability/:patientId
+ * Get match probability for a specific patient (FREE!)
+ * Query params: organType (required)
+ */
+router.get('/matching/patient-probability/:patientId', async (req, res) => {
+    try {
+        const matchingService = require('../services/matchingService');
+        const Patient = require('../db/models/Patient');
+
+        const { patientId } = req.params;
+        const { organType } = req.query;
+
+        if (!organType) {
+            return res.status(400).json({
+                success: false,
+                error: 'organType query parameter is required'
+            });
+        }
+
+        // Fetch the patient
+        const patient = await Patient.findOne({ patientId })
+            .select('patientId personalInfo medicalInfo waitlistInfo')
+            .lean();
+
+        if (!patient) {
+            return res.status(404).json({
+                success: false,
+                error: 'Patient not found'
+            });
+        }
+
+        // Fetch all patients in same organ type waitlist
+        const waitlist = await Patient.find({
+            'medicalInfo.organType': organType.toUpperCase(),
+            'waitlistInfo.isActive': true
+        })
+        .select('patientId medicalInfo waitlistInfo')
+        .lean();
+
+        // Calculate composite scores for all patients
+        const scores = waitlist.map(p => ({
+            patientId: p.patientId,
+            score: matchingService.calculateCompositeScore(p)
+        }));
+
+        // Sort by score (descending)
+        scores.sort((a, b) => b.score - a.score);
+
+        // Find current patient's position
+        const currentPatientScore = matchingService.calculateCompositeScore(patient);
+        const position = scores.findIndex(s => s.patientId === patientId) + 1;
+        const topScore = scores[0]?.score || 1;
+
+        // Calculate probability
+        const probability = matchingService.calculateMatchProbability(currentPatientScore, topScore);
+
+        // Calculate days waiting
+        const daysWaiting = Math.floor(
+            (new Date() - new Date(patient.waitlistInfo.registrationDate)) / (1000 * 60 * 60 * 24)
+        );
+
+        res.json({
+            success: true,
+            patient: {
+                patientId: patient.patientId,
+                firstName: patient.personalInfo?.firstName,
+                lastName: patient.personalInfo?.lastName,
+                bloodType: patient.medicalInfo.bloodType,
+                urgencyLevel: patient.medicalInfo.urgencyLevel,
+                medicalScore: patient.medicalInfo.medicalScore,
+                daysWaiting
+            },
+            position,
+            totalInQueue: waitlist.length,
+            compositeScore: currentPatientScore,
+            matchProbability: Math.round(probability),
+            breakdown: {
+                urgencyPoints: patient.medicalInfo.urgencyLevel * 1000,
+                medicalScorePoints: patient.medicalInfo.medicalScore,
+                waitTimePoints: daysWaiting
+            },
+            topPatientScore: topScore,
+            scoreGap: topScore - currentPatientScore,
+            source: 'mongodb + matching-service',
+            cost: 'FREE',
+            message: `Patient ranked #${position} of ${waitlist.length} with ${Math.round(probability)}% match probability`
+        });
+
+    } catch (error) {
+        console.error('Error calculating patient probability:', error);
         res.status(500).json({
             success: false,
             error: error.message

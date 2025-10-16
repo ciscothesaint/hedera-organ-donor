@@ -56,6 +56,24 @@ export const mirrorAPI = {
 
   // Get all votes for a proposal (full transparency)
   getProposalVotes: (proposalId) => api.get(`/dao/proposals/${proposalId}/votes`),
+
+  // ============================================
+  // ORGAN MATCHING METHODS - PUBLIC TRANSPARENCY
+  // Shows how the matching algorithm works
+  // FREE - No authentication required
+  // ============================================
+
+  // Get all available organs for matching
+  getAvailableOrgans: () => api.get('/organs/available'),
+
+  // Simulate organ matching with current waitlist
+  // organData: { organType, bloodType, weight }
+  simulateMatching: (organData) => api.post('/matching/simulate', organData),
+
+  // Get match probability for a specific patient
+  // organType query parameter required
+  getPatientProbability: (patientId, organType) =>
+    api.get(`/matching/patient-probability/${patientId}`, { params: { organType } }),
 };
 
 export default mirrorAPI;

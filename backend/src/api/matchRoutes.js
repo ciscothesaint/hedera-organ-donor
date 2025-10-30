@@ -7,6 +7,7 @@ const Organ = require('../db/models/Organ');
 const { authenticate } = require('../middleware/auth');
 const autoMatchingService = require('../services/autoMatchingService');
 const contractService = require('../hedera/contractService');
+const { logOrganMatch } = require('../hedera/topicService');
 
 const router = express.Router();
 
@@ -138,7 +139,7 @@ router.patch('/:matchId', authenticate, async (req, res) => {
         } 
         const client = hederaClient.getClient();
           const contractId = process.env.MATCHING_CONTRACT_ID;;
-        if(status='ACCEPTED'){
+        if(status=='ACCEPTED'){
             await contractService.acceptAllocation(client,contractId,`${match.organId, "-", match.patientId}`)
         }
         else if(status=='COMPLETED'){

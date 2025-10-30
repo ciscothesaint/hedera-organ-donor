@@ -233,9 +233,9 @@ async function rejectAllocation(client, contractId, allocationId,reason) {
         2000000  // Adjust gas as needed
     );
 }
-async function completeTransplant(client, contractId, allocationData) {
+async function completeTransplant(client, contractId, allocationId) {
     const params = new ContractFunctionParameters()
-        .addString(allocationData.allocationId);
+        .addString(allocationId);
 
     return await executeContractFunction(
         client,

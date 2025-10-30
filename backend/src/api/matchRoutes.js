@@ -1,10 +1,12 @@
 const express = require('express');
 const Match = require('../db/models/Match');
+
 const Appointment = require('../db/models/Appointment');
 const Patient = require('../db/models/Patient');
 const Organ = require('../db/models/Organ');
 const { authenticate } = require('../middleware/auth');
 const autoMatchingService = require('../services/autoMatchingService');
+const contractService = require('../hedera/contractService');
 
 const router = express.Router();
 
@@ -114,7 +116,7 @@ router.get('/:matchId', authenticate, async (req, res) => {
  */
 router.patch('/:matchId', authenticate, async (req, res) => {
     try {
-        const { status } = req.body;
+        const { status,reason } = req.body;
 
         if (!['PENDING', 'ACCEPTED', 'REJECTED', 'COMPLETED'].includes(status)) {
             return res.status(400).json({
@@ -128,13 +130,50 @@ router.patch('/:matchId', authenticate, async (req, res) => {
             { status },
             { new: true }
         );
-
         if (!match) {
             return res.status(404).json({
                 success: false,
                 error: 'Match not found'
             });
+        } 
+        const client = hederaClient.getClient();
+          const contractId = process.env.MATCHING_CONTRACT_ID;;
+        if(status='ACCEPTED'){
+            await contractService.acceptAllocation(client,contractId,`${match.organId, "-", match.patientId}`)
         }
+        else if(status=='COMPLETED'){
+            await contractService.completeTransplant(client,contractId,`${match.organId, "-", match.patientId}`)
+        }
+        else if(status=='REJECTED'){
+            await contractService.rejectAllocation(client,contractId,`${match.organId, "-", match.patientId}`,reason?reason:"without reason")
+        }
+       
+        if (process.env.ORGAN_MATCH_TOPIC_ID) {
+            console.log('found a match')
+            const patient = await Patient.findOne({ patientId: match.patientId })
+            .select('patientId personalInfo medicalInfo hospitalInfo')
+            .lean();
+    
+            const organ = await Organ.findOne({ organId: match.organId })
+                .select('organId organInfo hospitalInfo timing')
+                .lean();
+            await logOrganMatch(
+                client,
+                process.env.ORGAN_MATCH_TOPIC_ID,
+                {
+                    organId:match.organId,
+                    organ:{id:match.organId,type:organ.organInfo.organType,bloodType:organ.organInfo.bloodType},
+                    patient:{
+                        id:match.patientId,
+                        name:`${patient.personalInfo.firstName} ${patient.personalInfo.lastName}`
+                    },
+                    timestamp: new Date().toISOString(),
+                }
+            );
+        }
+        
+     
+       
 
         res.json({
             success: true,

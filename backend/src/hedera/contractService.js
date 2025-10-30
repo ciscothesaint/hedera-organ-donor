@@ -208,6 +208,44 @@ async function allocateOrgan(client, contractId, organId, patientId) {
         2000000  // Increased to 2M gas for allocation operations
     );
 }
+async function acceptAllocation(client, contractId, allocationId) {
+    const params = new ContractFunctionParameters()
+        .addString(allocationId);
+
+    return await executeContractFunction(
+        client,
+        contractId,
+        'acceptAllocation',
+        params,
+        1000000  // Adjust gas as needed
+    );
+}
+async function rejectAllocation(client, contractId, allocationId,reason) {
+    const params = new ContractFunctionParameters()
+        .addString(allocationId)
+        .addString(reason)
+
+    return await executeContractFunction(
+        client,
+        contractId,
+        'rejectAllocation',
+        params,
+        2000000  // Adjust gas as needed
+    );
+}
+async function completeTransplant(client, contractId, allocationData) {
+    const params = new ContractFunctionParameters()
+        .addString(allocationData.allocationId);
+
+    return await executeContractFunction(
+        client,
+        contractId,
+        'completeTransplant',
+        params,
+        1000000
+    );
+}
+
 
 module.exports = {
     deployContract,
@@ -219,4 +257,7 @@ module.exports = {
     updateUrgency,
     registerOrgan,
     allocateOrgan,
+    acceptAllocation,
+    rejectAllocation,
+    completeTransplant,
 };

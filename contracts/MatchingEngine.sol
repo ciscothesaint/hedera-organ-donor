@@ -117,26 +117,19 @@ contract MatchingEngine {
      */
     function findMatch(string memory _organId, string[] memory _waitlistPatientIds)
         public view returns (string memory bestMatchPatientId, uint256 bestScore) {
-
         Organ memory organ = organs[_organId];
         require(!organ.isAllocated, "Organ already allocated");
         require(block.timestamp < organ.expiryTime, "Organ expired");
-
         bestScore = 0;
         bestMatchPatientId = "";
-
         for (uint256 i = 0; i < _waitlistPatientIds.length; i++) {
             string memory patientId = _waitlistPatientIds[i];
-
-            // Calculate match score (in real implementation, this would call WaitlistRegistry)
             uint256 score = calculateMatchScore(_organId, patientId);
-
             if (score > bestScore) {
                 bestScore = score;
                 bestMatchPatientId = patientId;
             }
         }
-
         return (bestMatchPatientId, bestScore);
     }
 
@@ -177,15 +170,11 @@ contract MatchingEngine {
      */
     function allocateOrgan(string memory _organId, string memory _patientId)
         public onlyAuthorized {
-
         require(!organs[_organId].isAllocated, "Organ already allocated");
         require(block.timestamp < organs[_organId].expiryTime, "Organ expired");
-
         organs[_organId].isAllocated = true;
         organs[_organId].allocatedToPatient = _patientId;
-
         string memory allocationId = string(abi.encodePacked(_organId, "-", _patientId));
-
         allocations[allocationId] = Allocation({
             organId: _organId,
             patientId: _patientId,
@@ -193,7 +182,6 @@ contract MatchingEngine {
             accepted: false,
             completed: false
         });
-
         allocationIds.push(allocationId);
 
         emit MatchFound(_organId, _patientId, 0, block.timestamp);

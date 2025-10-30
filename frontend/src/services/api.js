@@ -1,12 +1,13 @@
-import axios from 'axios';
-import { useAuthStore } from './authStore';
+import axios from "axios";
+import { useAuthStore } from "./authStore";
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000/api';
+const API_BASE_URL =
+  import.meta.env.VITE_API_URL || "http://localhost:4000/api";
 
 const api = axios.create({
   baseURL: API_BASE_URL,
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
 });
 
@@ -30,7 +31,7 @@ api.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       useAuthStore.getState().logout();
-      window.location.href = '/login';
+      window.location.href = "/login";
     }
     return Promise.reject(error);
   }
@@ -38,17 +39,17 @@ api.interceptors.response.use(
 
 // Auth API
 export const authAPI = {
-  login: (credentials) => api.post('/auth/login', credentials),
-  register: (userData) => api.post('/auth/register', userData),
-  getProfile: () => api.get('/auth/me'),
-  logout: () => api.post('/auth/logout'),
+  login: (credentials) => api.post("/auth/login", credentials),
+  register: (userData) => api.post("/auth/register", userData),
+  getProfile: () => api.get("/auth/me"),
+  logout: () => api.post("/auth/logout"),
 };
 
 // Patient API
 export const patientAPI = {
-  getAll: (params) => api.get('/patients', { params }),
+  getAll: (params) => api.get("/patients", { params }),
   getById: (patientId) => api.get(`/patients/${patientId}`),
-  register: (patientData) => api.post('/patients', patientData),
+  register: (patientData) => api.post("/patients", patientData),
   updateUrgency: (patientId, urgencyLevel) =>
     api.put(`/patients/${patientId}/urgency`, { urgencyLevel }),
   remove: (patientId, reason) =>
@@ -58,13 +59,13 @@ export const patientAPI = {
 
 // Organ API
 export const organAPI = {
-  getAll: (params) => api.get('/organs', { params }),
+  getAll: (params) => api.get("/organs", { params }),
   getById: (organId) => api.get(`/organs/${organId}`),
-  register: (organData) => api.post('/organs', organData),
+  register: (organData) => api.post("/organs", organData),
   getAvailable: (organType) => api.get(`/organs/available/${organType}`),
   findMatch: (organId) => api.post(`/organs/${organId}/find-match`),
   allocate: (organId, patientId) =>
-    api.post('/organs/allocate', { organId, patientId }),
+    api.post("/organs/allocate", { organId, patientId }),
   accept: (organId) => api.post(`/organs/${organId}/accept`),
   reject: (organId, reason) =>
     api.post(`/organs/${organId}/reject`, { reason }),
@@ -75,7 +76,7 @@ export const organAPI = {
 // All these endpoints query blockchain data without paying gas
 export const mirrorAPI = {
   // Health check
-  health: () => api.get('/mirror/health'),
+  health: () => api.get("/mirror/health"),
 
   // Patient queries (FREE)
   getWaitlist: (organType) => api.get(`/mirror/patients/waitlist/${organType}`),
@@ -83,13 +84,13 @@ export const mirrorAPI = {
     api.get(`/mirror/patients/position/${patientHash}`, {
       params: { organType },
     }),
-  getAllPatients: () => api.get('/mirror/patients/all'),
+  getAllPatients: () => api.get("/mirror/patients/all"),
 
   // Organ queries (FREE)
-  getAllOrgans: () => api.get('/mirror/organs/all'),
+  getAllOrgans: () => api.get("/mirror/organs/all"),
 
   // Statistics (FREE)
-  getStats: () => api.get('/mirror/stats'),
+  getStats: () => api.get("/mirror/stats"),
 
   // Contract & transaction info (FREE)
   getContract: (contractId) => api.get(`/mirror/contract/${contractId}`),
@@ -98,21 +99,33 @@ export const mirrorAPI = {
 
   // Cache management
   invalidateCache: (pattern) =>
-    api.post('/mirror/cache/invalidate', { pattern }),
+    api.post("/mirror/cache/invalidate", { pattern }),
 };
 
 // DAO User Management API (Admin only)
 export const daoAdminAPI = {
-  getDaoUsers: (status) => api.get('/admin/dao-users', { params: { status } }),
-  authorizeUser: (userId, votingPower) => api.post(`/admin/dao-users/${userId}/authorize`, { votingPower }),
+  getDaoUsers: (status) => api.get("/admin/dao-users", { params: { status } }),
+  authorizeUser: (userId, votingPower) =>
+    api.post(`/admin/dao-users/${userId}/authorize`, { votingPower }),
   revokeUser: (userId) => api.post(`/admin/dao-users/${userId}/revoke`),
-  updateVotingPower: (userId, votingPower) => api.patch(`/admin/dao-users/${userId}/voting-power`, { votingPower }),
+  updateVotingPower: (userId, votingPower) =>
+    api.patch(`/admin/dao-users/${userId}/voting-power`, { votingPower }),
+};
+
+// Match API
+export const matchAPI = {
+  getAll: (params) => api.get("/matches", { params }),
+  getById: (matchId) => api.get(`/matches/${matchId}`),
+  updateStatus: (matchId, status, reason) =>
+    api.patch(`/matches/${matchId}`, { status, reason }),
+  runMatching: () => api.post("/matches/run-matching"),
 };
 
 // System Settings API (Admin only)
 export const systemSettingsAPI = {
-  setEmergencyPassword: (password, confirmPassword) => api.post('/settings/emergency-password', { password, confirmPassword }),
-  getPasswordStatus: () => api.get('/settings/emergency-password/status'),
+  setEmergencyPassword: (password, confirmPassword) =>
+    api.post("/settings/emergency-password", { password, confirmPassword }),
+  getPasswordStatus: () => api.get("/settings/emergency-password/status"),
 };
 
 export default api;

@@ -5,7 +5,7 @@ import DaoStats from './components/DaoStats';
 import DaoProposals from './components/DaoProposals';
 import VotingActivity from './components/VotingActivity';
 import WaitlistTabs from './components/WaitlistTabs';
-import OrganMatchingSection from './components/OrganMatchingSection';
+import MatchesList from './components/MatchesList';
 import BlockchainVerification from './components/BlockchainVerification';
 import HowItWorks from './components/HowItWorks';
 import RecentActivity from './components/RecentActivity';
@@ -15,7 +15,6 @@ import './styles/hero.css';
 import './styles/stats.css';
 import './styles/daoproposals.css';
 import './styles/waitlist.css';
-import './styles/matching.css';
 
 function App() {
   return (
@@ -25,6 +24,11 @@ function App() {
         {/* Live Patient Statistics */}
         <LiveStats />
 
+        {/* Successful Organ Matches */}
+        <section id="matches">
+          <MatchesList />
+        </section>
+
         {/* DAO Governance Transparency Section */}
         <DaoStats />
         <DaoProposals />
@@ -32,9 +36,6 @@ function App() {
 
         {/* Patient Waitlist Management */}
         <WaitlistTabs />
-
-        {/* Organ Matching Algorithm Transparency */}
-        <OrganMatchingSection />
 
         {/* Blockchain Verification & How It Works */}
         <BlockchainVerification />

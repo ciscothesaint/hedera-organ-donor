@@ -1,30 +1,11 @@
 {
   "permissions": {
     "allow": [
-      "Bash(mkdir:*)",
-      "Bash(tree:*)",
-      "Bash(npx solc:*)",
-      "Bash(node:*)",
-      "Bash(npm install:*)",
-      "Bash(cat:*)",
-      "Bash(npm run test:workflow:*)",
-      "Bash(npm run:*)",
-      "Bash(netstat:*)",
-      "Bash(findstr:*)",
-      "Bash(taskkill:*)",
-      "Bash(dir:*)",
-      "Bash(timeout:*)",
-      "Bash(ping:*)",
-      "Bash(curl:*)",
-      "Bash(python:*)",
-      "Bash(npx solcjs:*)",
-      "Bash(echo:*)",
-      "Bash(cmd /c:*)",
-      "Bash(copy contracts_GovernanceDAO_sol_GovernanceDAO.abi backendcontractsGovernanceDAO.abi)",
-      "Bash(copy contracts_GovernanceDAO_sol_GovernanceDAO.bin backendcontractsGovernanceDAO.bin)",
-      "Bash(tasklist)",
-      "Bash(copy \"frontend-dao\\src\\components\\Modal\\Modal.css\" \"frontend\\src\\components\\Modal\\Modal.css\")",
-      "Bash(copy:*)"
+      "Bash(git commit -m \"$(cat <<''EOF''\nfeat: Add frontend matching system UI components and styling\n\nFrontend-public enhancements:\n- Create OrganMatchingSection.jsx with 3-tab interface:\n  - Algorithm Explanation tab: Shows formula, factors, and example calculations\n  - Matching Simulator tab: Interactive organ matching test tool\n  - Blood Compatibility Guide tab: Complete 8-type compatibility matrix\n- Create MatchingSimulator.jsx component:\n  - Form inputs for organ type, blood type, and weight\n  - Real-time matching simulation via backend API\n  - Display top 5 matches with score breakdowns\n  - Match probability visualization with color-coded bars\n- Enhance WaitlistTabs.jsx with new columns:\n  - Urgency level with visual star indicators\n  - Days waiting calculation\n  - Composite score display\n  - Match probability bars (color-coded)\n- Create comprehensive matching.css stylesheet (706 lines):\n  - Purple gradient theme (#667eea to #764ba2)\n  - Tab navigation with active states\n  - Form styling with focus effects\n  - Match cards with hover animations\n  - Probability bars with smooth transitions\n  - Responsive design for all screen sizes\n- Enhance waitlist.css with matching system styles (137 lines):\n  - Urgency stars styling\n  - Composite score formatting\n  - Probability cell with bar containers\n  - Enhanced table column widths\n  - Mobile responsive adjustments\n- Integrate OrganMatchingSection into App.jsx\n- Import matching.css stylesheet\n\nUI Features:\n- Interactive matching simulator with real-time API calls\n- Educational algorithm explanation with visual examples\n- Complete blood compatibility reference guide\n- Enhanced waitlist table with 8 columns\n- Color-coded probability indicators (green/blue/orange/red)\n- Smooth animations and transitions throughout\n- Fully responsive mobile design\n\nAlgorithm transparency:\n- Formula clearly displayed: (Urgency × 1000) + Medical + Wait Time\n- Factor breakdowns with weights and descriptions\n- Example calculations with step-by-step math\n- Blood compatibility rules explained\n- Universal donor/recipient indicators\n\nNext steps: Test complete system with backend running\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
+      "Bash(git checkout:*)",
+      "Bash(del \"backend\\src\\services\\matchingService.js\")",
+      "Bash(rm:*)",
+      "Bash(powershell -Command \"Stop-Process -Id 35216 -Force\")"
     ],
     "deny": [],
     "ask": []

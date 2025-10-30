@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import mirrorAPI from '../services/mirrorApi';
-import { getUrgencyStars, formatScore, getProbabilityColor, formatProbability } from '../utils/matchingUtils';
 import '../styles/waitlist.css';
 
 const ORGAN_TYPES = [
@@ -116,75 +115,39 @@ function WaitlistTable({ data, organType }) {
             <th>Patient ID</th>
             <th>Blood Type</th>
             <th>Urgency</th>
-            <th>Days Waiting</th>
-            <th>Score</th>
-            <th>Match Probability</th>
             <th>Blockchain</th>
           </tr>
         </thead>
         <tbody>
-          {data.map((patient, index) => {
-            const probabilityColor = getProbabilityColor(patient.matchProbability || 0);
-
-            return (
-              <tr key={patient.patientHash || index}>
-                <td>
-                  <div className="position-badge">#{index + 1}</div>
-                </td>
-                <td>
-                  <span className="patient-id">{patient.patientId || 'N/A'}</span>
-                </td>
-                <td>
-                  <span className="blood-type">{patient.bloodType || 'N/A'}</span>
-                </td>
-                <td>
-                  <div className="urgency-cell">
-                    <span className={`urgency-badge urgency-${(patient.urgency || 'ROUTINE').toLowerCase()}`}>
-                      {patient.urgency || 'ROUTINE'}
-                    </span>
-                    <span className="urgency-stars" title={`Urgency Level ${patient.urgencyLevel || 1}`}>
-                      {getUrgencyStars(patient.urgencyLevel || 1)}
-                    </span>
-                  </div>
-                </td>
-                <td>
-                  <span className="days-waiting">{patient.daysWaiting || 0} days</span>
-                </td>
-                <td>
-                  <span className="composite-score" title="Composite Score: (Urgency × 1000) + Medical Score + Days Waiting">
-                    {formatScore(patient.compositeScore || 0)}
-                  </span>
-                </td>
-                <td>
-                  <div className="probability-cell">
-                    <div className="probability-bar-container">
-                      <div
-                        className="probability-bar"
-                        style={{
-                          width: `${patient.matchProbability || 0}%`,
-                          backgroundColor: probabilityColor
-                        }}
-                      />
-                    </div>
-                    <span className="probability-text" style={{ color: probabilityColor }}>
-                      {formatProbability(patient.matchProbability || 0)}
-                    </span>
-                  </div>
-                </td>
-                <td>
-                  <a
-                    href={`${hashScanUrl}/transaction/${patient.txId}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="blockchain-link"
-                    title={`View on Hashscan: ${patient.patientHash}`}
-                  >
-                    ✅ View
-                  </a>
-                </td>
-              </tr>
-            );
-          })}
+          {data.map((patient, index) => (
+            <tr key={patient.patientHash || index}>
+              <td>
+                <div className="position-badge">#{index + 1}</div>
+              </td>
+              <td>
+                <span className="patient-id">{patient.patientId || 'N/A'}</span>
+              </td>
+              <td>
+                <span className="blood-type">{patient.bloodType || 'N/A'}</span>
+              </td>
+              <td>
+                <span className={`urgency-badge urgency-${(patient.urgency || 'ROUTINE').toLowerCase()}`}>
+                  {patient.urgency || 'ROUTINE'}
+                </span>
+              </td>
+              <td>
+                <a
+                  href={`${hashScanUrl}/transaction/${patient.txId}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="blockchain-link"
+                  title={`View on Hashscan: ${patient.patientHash}`}
+                >
+                  ✅ View
+                </a>
+              </td>
+            </tr>
+          ))}
         </tbody>
       </table>
     </div>

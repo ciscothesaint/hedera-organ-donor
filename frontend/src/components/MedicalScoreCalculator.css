@@ -1,0 +1,399 @@
+.medical-calculator-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    backdrop-filter: blur(4px);
+}
+
+.medical-calculator-modal {
+    background: white;
+    border-radius: 16px;
+    width: 90%;
+    max-width: 650px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-30px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.calculator-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 25px 30px;
+    border-bottom: 2px solid #e5e7eb;
+}
+
+.calculator-header h2 {
+    font-size: 1.5rem;
+    color: #1f2937;
+    margin: 0;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: #9ca3af;
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    transition: all 0.2s;
+}
+
+.close-btn:hover {
+    background: #f3f4f6;
+    color: #1f2937;
+}
+
+/* Progress Bar */
+.progress-bar {
+    padding: 20px 30px;
+    background: #f9fafb;
+}
+
+.progress-text {
+    font-size: 0.9rem;
+    color: #6b7280;
+    margin-bottom: 10px;
+    font-weight: 600;
+}
+
+.progress-track {
+    height: 8px;
+    background: #e5e7eb;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+    transition: width 0.4s ease;
+    border-radius: 10px;
+}
+
+/* Question Card */
+.question-card {
+    padding: 30px;
+}
+
+.question-title {
+    font-size: 1.3rem;
+    color: #1f2937;
+    margin: 0 0 10px 0;
+    font-weight: 700;
+}
+
+.question-subtitle {
+    font-size: 1rem;
+    color: #6b7280;
+    margin: 0 0 25px 0;
+}
+
+/* Options List */
+.options-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.option-card {
+    display: block;
+    padding: 18px;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+}
+
+.option-card:hover {
+    border-color: #3b82f6;
+    background: #eff6ff;
+    transform: translateX(5px);
+}
+
+.option-card.selected {
+    border-color: #3b82f6;
+    background: #dbeafe;
+}
+
+.option-card input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+}
+
+.option-content {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.option-label {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.option-description {
+    font-size: 0.9rem;
+    color: #6b7280;
+}
+
+.option-points {
+    font-size: 0.85rem;
+    color: #3b82f6;
+    font-weight: 700;
+    margin-top: 4px;
+}
+
+/* Auto Calculated */
+.auto-calculated {
+    text-align: center;
+    padding: 40px;
+    background: #f0fdf4;
+    border-radius: 12px;
+    border: 2px solid #86efac;
+}
+
+.auto-icon {
+    font-size: 3rem;
+    margin-bottom: 15px;
+    color: #22c55e;
+}
+
+.auto-text {
+    font-size: 1.1rem;
+    color: #16a34a;
+    margin-bottom: 10px;
+    font-weight: 600;
+}
+
+.auto-score {
+    font-size: 1.5rem;
+    color: #15803d;
+    font-weight: 700;
+}
+
+/* Actions */
+.calculator-actions {
+    display: flex;
+    gap: 15px;
+    padding: 20px 30px;
+    border-top: 2px solid #e5e7eb;
+}
+
+.btn-primary,
+.btn-secondary {
+    flex: 1;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+    background: linear-gradient(135deg, #2563eb, #7c3aed);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
+}
+
+.btn-primary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.btn-secondary {
+    background: white;
+    color: #6b7280;
+    border: 2px solid #e5e7eb;
+}
+
+.btn-secondary:hover:not(:disabled) {
+    background: #f9fafb;
+    border-color: #9ca3af;
+}
+
+.btn-secondary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Results Screen */
+.results-screen {
+    padding: 40px 30px;
+}
+
+.score-display {
+    text-align: center;
+    padding: 40px;
+    border-radius: 16px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 5px;
+}
+
+.score-number {
+    font-size: 5rem;
+    font-weight: 900;
+    line-height: 1;
+}
+
+.score-total {
+    font-size: 2rem;
+    font-weight: 600;
+    opacity: 0.7;
+}
+
+.score-excellent {
+    background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+    color: #065f46;
+}
+
+.score-good {
+    background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+    color: #1e40af;
+}
+
+.score-fair {
+    background: linear-gradient(135deg, #fed7aa, #fdba74);
+    color: #9a3412;
+}
+
+.score-poor {
+    background: linear-gradient(135deg, #fecaca, #fca5a5);
+    color: #991b1b;
+}
+
+.score-label {
+    text-align: center;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 30px;
+}
+
+.score-breakdown {
+    background: #f9fafb;
+    padding: 25px;
+    border-radius: 12px;
+    margin-bottom: 25px;
+}
+
+.score-breakdown h3 {
+    font-size: 1.1rem;
+    color: #1f2937;
+    margin: 0 0 15px 0;
+    font-weight: 700;
+}
+
+.breakdown-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.breakdown-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.breakdown-item:last-child {
+    border-bottom: none;
+}
+
+.breakdown-item span:first-child {
+    color: #6b7280;
+    font-weight: 500;
+}
+
+.breakdown-item span:last-child {
+    color: #1f2937;
+    font-weight: 600;
+}
+
+.breakdown-total {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px 0 0 0;
+    margin-top: 10px;
+    border-top: 2px solid #d1d5db;
+}
+
+.breakdown-total span {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #1f2937;
+}
+
+.results-actions {
+    display: flex;
+    gap: 15px;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    .medical-calculator-modal {
+        width: 95%;
+        max-height: 95vh;
+    }
+
+    .calculator-header {
+        padding: 20px;
+    }
+
+    .calculator-header h2 {
+        font-size: 1.2rem;
+    }
+
+    .question-card {
+        padding: 20px;
+    }
+
+    .question-title {
+        font-size: 1.1rem;
+    }
+
+    .score-number {
+        font-size: 3.5rem;
+    }
+
+    .score-total {
+        font-size: 1.5rem;
+    }
+}

@@ -191,6 +191,7 @@ async function registerOrgan(client, contractId, organData) {
     );
 }
 
+
 /**
  * Allocate organ to patient
  */

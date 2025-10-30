@@ -60,6 +60,7 @@ router.post('/', authenticate, authorize('canRegisterPatients'), validatePatient
                 process.env.PATIENT_REGISTRATION_TOPIC_ID,
                 {
                     patientId: patient.patientId,
+                    name:`${patient.personalInfo.firstName} ${patient.personalInfo.lastName}`,
                     organType: patient.medicalInfo.organType,
                     timestamp: new Date().toISOString(),
                 }

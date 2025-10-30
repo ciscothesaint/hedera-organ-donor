@@ -124,6 +124,10 @@ class MirrorNodeService {
      * Decode PatientRegistered event data (12 fields)
      * Event signature: PatientRegistered(string indexed patientId, address patientAddress, string firstName, string lastName, string organType, string bloodType, uint8 urgencyLevel, uint256 medicalScore, uint256 weight, uint256 height, bool isActive, uint256 timestamp)
      */
+    decodeString(buffer, offset) {
+        const length = parseInt(buffer.slice(offset, offset + 32).toString('hex'), 16);
+        return buffer.slice(offset + 32, offset + 32 + length).toString('utf8');
+    }
     decodePatientRegisteredEvent(eventData) {
         try {
             // Remove 0x prefix if present
@@ -248,16 +252,18 @@ class MirrorNodeService {
 
                             // Decode event data
                             const eventData = this.decodePatientRegisteredEvent(log.data);
+                            console.log(eventData)
+                            //  console.log('the result of decoding is ',eventData)
 
                             if (eventData) {
                                 // Note: patientId is indexed (hashed in topics), so we can't decode it
                                 // Use timestamp from Mirror Node API (field name is 'timestamp' not 'consensus_timestamp')
                                 const timestamp = log.timestamp || eventData.timestamp;
                                 const txId = log.transaction_hash || log.root_contract_id;
-                                const patientId = `PATIENT-${timestamp}`;
+                                
 
                                 const patient = {
-                                    patientId,
+                                  
                                     ...eventData,
                                     transactionId: txId,
                                     blockNumber: log.block_number,
@@ -330,10 +336,17 @@ class MirrorNodeService {
         return this.getCached(cacheKey, async () => {
             try {
                 const { patients } = await this.getPatientRegistrations(contractId);
-
+                   console.log('the patients are ',patients) 
                 // Filter by organ type and active status
-                const waitlist = patients.filter(p =>
-                    p.organType === organType && p.isActive !== false
+                const waitlist = patients.filter(p =>{
+                    if(organType=='all' ){
+                        return (p.isActive !== false)
+                    }
+                    else{
+                        return p.organType === organType && p.isActive !== false
+                    }
+                }
+                    
                 );
 
                 // Sort by priority (urgency + medical score + wait time)
@@ -344,7 +357,6 @@ class MirrorNodeService {
                 });
 
                 console.log(`📋 Waitlist for ${organType}: ${waitlist.length} patients`);
-
                 return {
                     organType,
                     waitlist,

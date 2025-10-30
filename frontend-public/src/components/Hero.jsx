@@ -6,6 +6,10 @@ function Hero() {
     document.getElementById('waitlists')?.scrollIntoView({ behavior: 'smooth' });
   };
 
+  const scrollToMatches = () => {
+    document.getElementById('matches')?.scrollIntoView({ behavior: 'smooth' });
+  };
+
   return (
     <div className="hero">
       <div className="hero-content">
@@ -41,17 +45,12 @@ function Hero() {
         </div>
 
         <div className="hero-actions">
-          <button className="btn btn-primary" onClick={scrollToWaitlists}>
+          <button className="btn btn-primary" onClick={scrollToMatches}>
+            🤝 View Organ Matches
+          </button>
+          <button className="btn btn-secondary" onClick={scrollToWaitlists}>
             View Live Waitlists
           </button>
-          <a
-            href="https://docs.hedera.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn btn-secondary"
-          >
-            Learn About Blockchain
-          </a>
         </div>
 
         <div className="hero-trust">

@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { patientAPI } from '../services/api';
+import MedicalScoreCalculator from '../components/MedicalScoreCalculator';
 
 function RegisterPatient() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+  const [showCalculator, setShowCalculator] = useState(false);
 
   // Generate random patient ID
   const generatePatientId = () => {
@@ -33,7 +35,7 @@ function RegisterPatient() {
       organType: 'HEART',
       bloodType: 'O+',
       urgencyLevel: 3,
-      medicalScore: 50,
+      medicalScore: null, // Will be calculated
       weight: 70,
       height: 170,
       diagnosis: '',
@@ -51,6 +53,13 @@ function RegisterPatient() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Validate medical score
+    if (!formData.medicalInfo.medicalScore) {
+      setError('Please calculate the medical score before submitting');
+      return;
+    }
+
     setLoading(true);
     setError('');
 
@@ -65,6 +74,16 @@ function RegisterPatient() {
     }
   };
 
+  const handleSaveMedicalScore = (score) => {
+    updateField('medicalInfo', 'medicalScore', score);
+    setShowCalculator(false);
+  };
+  const setMedicalScore = (score)=>{
+    setShowCalculator(true)
+    const newFormData = JSON.parse(JSON.stringify(formData))
+    newFormData.medicalInfo.medicalScore = score
+    setFormData(newFormData)
+  }
   const updateField = (section, field, value) => {
     setFormData((prev) => ({
       ...prev,
@@ -239,7 +258,72 @@ function RegisterPatient() {
             </div>
           </div>
 
-          <button type="submit" className="btn btn-primary" disabled={loading}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
+            <div className="form-group">
+              <label className="label">Weight (kg)</label>
+              <input
+                type="number"
+                className="input"
+                value={formData.medicalInfo.weight}
+                onChange={(e) => updateField('medicalInfo', 'weight', parseFloat(e.target.value))}
+                required
+              />
+            </div>
+
+            <div className="form-group">
+              <label className="label">Height (cm)</label>
+              <input
+                type="number"
+                className="input"
+                value={formData.medicalInfo.height}
+                onChange={(e) => updateField('medicalInfo', 'height', parseFloat(e.target.value))}
+                required
+              />
+            </div>
+          </div>
+
+          <div className="form-group">
+            <label className="label">Medical Score (0-100)</label>
+            <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+              <input
+                className="input"
+                value={formData.medicalInfo.medicalScore !== null ? formData.medicalInfo.medicalScore : 'Not calculated'}
+                readOnly
+                style={{
+                  flex: 1,
+                  background: formData.medicalInfo.medicalScore !== null ? '#f0fdf4' : '#fef3c7',
+                  color: formData.medicalInfo.medicalScore !== null ? '#065f46' : '#92400e',
+                  fontWeight: 600
+                }}
+              />
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={() => setMedicalScore(50)}
+                style={{
+                  padding: '8px 16px',
+                  minWidth: 'auto',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '5px'
+                }}
+              >
+                🩺 Calculate Score
+              </button>
+            </div>
+            {!formData.medicalInfo.medicalScore && (
+              <small style={{ color: '#dc2626', fontSize: '0.875rem', marginTop: '5px', display: 'block' }}>
+                ⚠️ Please calculate medical score before submitting
+              </small>
+            )}
+            {formData.medicalInfo.medicalScore && (
+              <small style={{ color: '#059669', fontSize: '0.875rem', marginTop: '5px', display: 'block' }}>
+                ✓ Medical score calculated: {formData.medicalInfo.medicalScore}/100
+              </small>
+            )}
+          </div>
+
+          <button type="submit" className="btn btn-primary" disabled={loading || !formData.medicalInfo.medicalScore}>
             {loading ? 'Registering...' : 'Register Patient'}
           </button>
         </form>

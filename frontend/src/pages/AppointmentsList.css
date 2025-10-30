@@ -1,0 +1,211 @@
+.appointments-container {
+    padding: 30px;
+    max-width: 1600px;
+    margin: 0 auto;
+}
+
+.appointments-header {
+    margin-bottom: 30px;
+}
+
+.appointments-header h1 {
+    font-size: 2.5rem;
+    color: #1a1a1a;
+    margin-bottom: 10px;
+}
+
+.appointments-header p {
+    font-size: 1.1rem;
+    color: #666;
+}
+
+.appointments-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.appointments-table-wrapper {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+}
+
+.appointments-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.appointments-table thead {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.appointments-table th {
+    padding: 16px;
+    text-align: left;
+    font-weight: 700;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.appointments-table tbody tr {
+    border-bottom: 1px solid #e5e7eb;
+    transition: all 0.3s;
+}
+
+.appointments-table tbody tr:hover {
+    background: #f9fafb;
+}
+
+.appointments-table tbody tr.upcoming {
+    background: #f0f9ff;
+}
+
+.appointments-table tbody tr.upcoming:hover {
+    background: #e0f2fe;
+}
+
+.appointments-table td {
+    padding: 16px;
+    font-size: 0.95rem;
+}
+
+.appointment-id {
+    font-family: 'Courier New', monospace;
+    color: #1f2937;
+    font-size: 0.85rem;
+}
+
+.patient-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.patient-name {
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.patient-id {
+    font-size: 0.85rem;
+    color: #6b7280;
+}
+
+.organ-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.organ-type {
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.blood-badge {
+    padding: 4px 10px;
+    background: #fee2e2;
+    color: #991b1b;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    width: fit-content;
+}
+
+.hospital-cell {
+    font-weight: 500;
+    color: #4b5563;
+}
+
+.date-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.date-value {
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.upcoming-badge {
+    padding: 4px 10px;
+    background: #dcfce7;
+    color: #166534;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 0.75rem;
+    width: fit-content;
+}
+
+.duration-value {
+    font-weight: 600;
+    color: #6366f1;
+}
+
+.surgeon-name {
+    font-weight: 500;
+    color: #4b5563;
+}
+
+.status-badge {
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    display: inline-block;
+}
+
+.status-scheduled {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+.status-in-progress {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.status-completed {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.status-cancelled {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.no-data {
+    color: #9ca3af;
+    font-style: italic;
+}
+
+@media (max-width: 1200px) {
+    .appointments-table {
+        font-size: 0.85rem;
+    }
+
+    .appointments-table th,
+    .appointments-table td {
+        padding: 12px 10px;
+    }
+}
+
+@media (max-width: 768px) {
+    .appointments-table-wrapper {
+        overflow-x: auto;
+    }
+
+    .appointments-table {
+        min-width: 1000px;
+    }
+}

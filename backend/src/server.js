@@ -6,6 +6,7 @@ const { connectDB } = require('./db/connection');
 const authRoutes = require('./api/authRoutes');
 const patientRoutes = require('./api/patientRoutes');
 const organRoutes = require('./api/organRoutes');
+const matchRoutes = require('./api/matchRoutes');
 const mirrorRoutes = require('./routes/mirrorRoutes');
 
 // DAO Routes
@@ -45,6 +46,7 @@ app.get('/health', (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/patients', patientRoutes);
 app.use('/api/organs', organRoutes);
+app.use('/api/matches', matchRoutes); // Matches and appointments
 app.use('/api/mirror', mirrorRoutes); // FREE queries - no gas fees!
 app.use('/api/admin', adminDaoRoutes); // Admin DAO user management
 app.use('/api/settings', systemSettingsRoutes); // System settings (admin only)

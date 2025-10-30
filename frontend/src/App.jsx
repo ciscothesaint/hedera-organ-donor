@@ -12,6 +12,8 @@ import OrganList from './pages/OrganList';
 import RegisterOrgan from './pages/RegisterOrgan';
 import WaitlistView from './pages/WaitlistView';
 import DaoUsers from './pages/DaoUsers';
+import MatchesList from './pages/MatchesList';
+import AppointmentsList from './pages/AppointmentsList';
 
 function App() {
   const { isAuthenticated } = useAuthStore();
@@ -33,6 +35,8 @@ function App() {
                   <Route path="/organs" element={<OrganList />} />
                   <Route path="/organs/register" element={<RegisterOrgan />} />
                   <Route path="/waitlist/:organType" element={<WaitlistView />} />
+                  <Route path="/matches" element={<MatchesList />} />
+                  <Route path="/appointments" element={<AppointmentsList />} />
                   <Route path="/dao-users" element={<DaoUsers />} />
                   <Route path="/" element={<Navigate to="/dashboard" />} />
                 </Routes>

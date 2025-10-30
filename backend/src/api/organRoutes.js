@@ -6,6 +6,7 @@ const { registerOrgan: registerOrganOnChain, allocateOrgan } = require('../heder
 const { logOrganMatch } = require('../hedera/topicService');
 const { authenticate, authorize } = require('../middleware/auth');
 const { validateOrganRegistration, validateOrganAllocation } = require('../middleware/validation');
+const autoMatchingService = require('../services/autoMatchingService');
 
 const router = express.Router();
 
@@ -43,11 +44,38 @@ router.post('/', authenticate, authorize('canRegisterOrgans'), validateOrganRegi
 
         await organ.save();
 
+        // AUTO-MATCHING: Find and allocate to best matching patient
+        
+        const matchResult = await autoMatchingService.autoMatchOrgan(organ,client,contractId);
+        if (process.env.ORGAN_MATCH_TOPIC_ID && matchResult.matched) {
+            console.log('found a match')
+            await logOrganMatch(
+                client,
+                process.env.ORGAN_MATCH_TOPIC_ID,
+                {
+                    organId:organ.id,
+                    organ:{id:organ.id,type:organ.organInfo.organType,bloodType:organ.organInfo.bloodType},
+                    patient:{
+                        id:matchResult.match.patientId,
+                        name:matchResult.match.patientName
+                    },
+                    timestamp: new Date().toISOString(),
+                }
+            );
+        }
         res.status(201).json({
             message: 'Organ registered successfully',
             organ,
             blockchain: {
                 transactionId: result.transactionId,
+            },
+            matching: matchResult.matched ? {
+                matched: true,
+                patient: matchResult.match,
+                appointment: matchResult.appointment,
+            } : {
+                matched: false,
+                message: matchResult.message || 'No compatible patient found in waitlist',
             },
         });
     } catch (error) {
